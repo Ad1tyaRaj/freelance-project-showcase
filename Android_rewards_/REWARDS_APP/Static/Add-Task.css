@@ -1,0 +1,256 @@
+:root {
+    --primary: #6c5ce7;
+    --secondary: #a29bfe;
+    --light: #f5f6fa;
+    --dark: #2d3436;
+    --success: #00b894;
+    --danger: #d63031;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f0f2f5;
+    color: var(--dark);
+    min-height: 100vh;
+    padding-top: 60px;
+    line-height: 1.6;
+}
+
+/* Navbar */
+.navbar {
+    background-color: var(--primary);
+    padding: 1rem;
+    box-shadow: var(--shadow);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand {
+    color: white;
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand i {
+    margin-right: 10px;
+    animation: spin 5s linear infinite;
+}
+
+.navbar-menu {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.navbar-menu.active {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--primary);
+    padding: 1rem;
+}
+
+.navbar-item {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.navbar-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Container */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* App List */
+.app-list {
+    list-style: none;
+    flex: 2;
+    min-width: 0;
+}
+
+.app-item {
+    background: white;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.app-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.app-details {
+    flex: 1;
+}
+
+.app-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.app-points {
+    color: var(--success);
+}
+
+.download-button {
+    background-color: var(--primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+    background-color: var(--secondary);
+}
+
+/* Points Board */
+.points-board {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    flex: 1;
+    min-width: 0;
+}
+
+.points-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.points-total {
+    font-size: 2.5rem;
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.points-label {
+    color: var(--dark);
+    margin-bottom: 1rem;
+}
+
+.point-system-description {
+    font-size: 0.9rem;
+}
+
+/* Form */
+.form-container {
+    margin-top: 2rem;
+}
+
+.add-task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.add-task-form input[type="text"],
+.add-task-form input[type="email"],
+.add-task-form input[type="password"],
+.add-task-form textarea,
+.add-task-form input[type="file"],
+.add-task-form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .navbar-menu {
+        display: none;
+    }
+    
+    .menu-toggle {
+        display: block;
+    }
+    
+    .container {
+        flex-direction: column;
+        padding: 1rem;
+    }
+    
+    .app-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .app-info {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .points-total {
+        font-size: 2rem;
+    }
+    
+    .download-button {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .app-title {
+        font-size: 1rem;
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'Dashboard.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-tasks"></i>
+            <span>NeonRewards</span>
+        </div>
+        <div class="navbar-menu">
+            <a href="{% url 'home' %}" class="navbar-item"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'task' %}" class="navbar-item"><i class="fas fa-list-check"></i> Tasks</a>
+            <a href="{% url 'api' %}" class="navbar-item"><i class="fas fa-cogs"></i> API</a>
+            {% if user.is_superuser %}
+            <a href="{% url 'admin-dash' %}" class="navbar-item"><i class="fas fa-home"></i> Dashboard</a>
+            {% elif user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="navbar-item"><i class="fas fa-home"></i> Dashboard</a>
+            {% endif %}
+            <a href="{% url 'profile' %}" class="navbar-item"><i class="fas fa-user"></i> Profile</a>
+        </div>
+        <button class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2 class="card-title">Tasks Overview</h2>
+                <i class="fas fa-tasks"></i>
+            </div>
+            <div class="card-content">
+                <p><span class="stat-number">42</span> Tasks Completed</p>
+                <p><span class="stat-number">15</span> Pending Tasks</p>
+                <p><span class="stat-number">95%</span> Completion Rate</p>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2 class="card-title">Task Progress</h2>
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="card-content">
+                <p><span class="stat-number">8</span> Active Tasks</p>
+                <p><span class="stat-number">60%</span> Average Task Progress</p>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2 class="card-title">Downloaded Tasks</h2>
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="card-content">
+                <p><span class="stat-number">10</span> Tasks Downloaded</p>
+                <p><span class="stat-number">85%</span> Average Task Completion</p>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2 class="card-title">Upcoming Tasks</h2>
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="card-content">
+                <p>Task 1: April 5, 2025</p>
+                <p>Task 2: April 10, 2025</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Menu toggle for mobile
+        document.querySelector('.menu-toggle').addEventListener('click', () => {
+            document.querySelector('.navbar-menu').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+{% if request.user.is_authenticated %}
+<!-- Sidebar -->
+<div class="sidebar sidebar-expanded" id="sidebar">
+    <div class="d-flex justify-content-between align-items-center p-3">
+        <h4 class="m-0 text-white sidebar-title">Dashboard</h4>
+        <button class="btn btn-link text-white d-lg-none" id="closeSidebar">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="text-center mb-4">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="User Avatar" class="rounded-circle mb-2"
+            width="80" height="80">
+        <h6 class="text-white mb-0">Welcome, User</h6>
+        <small class="text-white-50">Admin</small>
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a href="{% url 'Base' %}" class="nav-link active">
+                <i class="fas fa-home"></i>
+                <span class="sidebar-text">Dashboard</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'facebook' %}" class="nav-link">
+                <i class="fab fa-facebook"></i>
+                <span class="sidebar-text">Facebook</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'twitter' %}" class="nav-link">
+                <i class="fab fa-twitter"></i>
+                <span class="sidebar-text">Twitter</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'instagram' %}" class="nav-link">
+                <i class="fab fa-instagram"></i>
+                <span class="sidebar-text">Instagram</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'linkedin' %}" class="nav-link">
+                <i class="fab fa-linkedin"></i>
+                <span class="sidebar-text">LinkedIn</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'analytics' %}" class="nav-link">
+                <i class="fas fa-chart-line"></i>
+                <span class="sidebar-text">Analytics</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'schedule' %}" class="nav-link">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="sidebar-text">Schedule Posts</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'settings' %}" class="nav-link">
+                <i class="fas fa-cog"></i>
+                <span class="sidebar-text">Settings</span>
+            </a>
+        </li>
+        <li class="nav-item mt-3">
+            <a href="{% url 'logout' %}" class="nav-link text-danger">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="sidebar-text">Logout</span>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<!-- Overlay for mobile -->
+<div class="overlay" id="overlay"></div>
+{% else %}
+<!-- Advertisement Sidebar for non-authenticated users -->
+<div class="sidebar sidebar-expanded" id="sidebar">
+    <div class="d-flex justify-content-between align-items-center p-3">
+        <h4 class="m-0 text-white sidebar-title">Social Media Dashboard</h4>
+        <button class="btn btn-link text-white d-lg-none" id="closeSidebar">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <!-- Advertisement Section -->
+    <div class="ad-container">
+        <!-- Featured Ad -->
+        <div class="ad-card mb-4">
+            <div class="ad-badge">Featured</div>
+            <img src="https://cdn.shopify.com/s/files/1/0070/7032/articles/Facebook_Ads_cost_Getty_1210806740_34887f1a-1d2e-41e4-be46-3f76772e2d0c.jpg?v=1729525430" alt="Premium Dashboard" class="ad-img mb-2">
+            <h5 class="text-white">Premium Dashboard</h5>
+            <p class="text-white-50 small">Manage all your social media accounts in one place</p>
+            <a href="{% url 'signup' %}" class="btn btn-light btn-sm w-100">Sign Up Now</a>
+        </div>
+        
+        {% comment %} <!-- Additional Ads -->
+        <div class="ad-card mb-4">
+            <img src="https://via.placeholder.com/250x120/3a0ca3/ffffff?text=Analytics+Tools" alt="Analytics Tools" class="ad-img mb-2">
+            <h6 class="text-white">Advanced Analytics</h6>
+            <p class="text-white-50 small">Track performance across platforms</p>
+            <a href="{% url 'signup' %}" class="btn btn-outline-light btn-sm w-100">Learn More</a>
+        </div>
+        
+        <div class="ad-card mb-4">
+            <img src="https://via.placeholder.com/250x120/f72585/ffffff?text=Content+Scheduler" alt="Content Scheduler" class="ad-img mb-2">
+            <h6 class="text-white">Content Scheduler</h6>
+            <p class="text-white-50 small">Plan and schedule your posts</p>
+            <a href="{% url 'signup' %}" class="btn btn-outline-light btn-sm w-100">Try It Free</a>
+        </div>  {% endcomment %}
+        
+        <!-- Login/Signup Buttons -->
+        <div class="mt-4 px-3">
+            <div class="d-grid gap-2">
+                <a href="{% url 'login' %}" class="btn btn-light">Log In</a>
+                <a href="{% url 'signup' %}" class="btn btn-outline-light">Sign Up</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Overlay for mobile -->
+<div class="overlay" id="overlay"></div>
+
+{% endif %}

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Form</title>
+    <link rel="stylesheet" href="{% static 'Edit.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-tasks"></i>
+            <span>NeonRewards</span>
+        </div>
+        <div class="navbar-menu">
+            <a href="{% url 'home' %}" class="navbar-item"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'task' %}" class="navbar-item"><i class="fas fa-list-check"></i> Tasks</a>
+            <a href="{% url 'api' %}" class="navbar-item"><i class="fas fa-cogs"></i> API</a>
+            {% if user.is_superuser %}
+            <a href="{% url 'admin-dash' %}" class="navbar-item"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{% url 'profile' %}" class="navbar-item"><i class="fas fa-user"></i> Profile</a>
+            {% elif user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="navbar-item"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{% url 'profile' %}" class="navbar-item"><i class="fas fa-user"></i> Profile</a>
+            {% else %}
+            <a href="{% url 'login' %}" class="navbar-item"><i class="fas fa-sign-in"></i> Login</a>
+            <a href="{% url 'signup' %}" class="navbar-item"><i class="fas fa-user-plus"></i> Sign Up</a>
+            {% endif %}
+        </div>
+        <button class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <div class="form-container">
+        {% if user.is_superuser %}
+        <form method="post" class="edit-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-button">Update</button>
+        </form>
+        {% else %}
+        <form method="post" class="edit-form">
+            {% csrf_token %}
+        
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Username:</label>
+                {{ form.username }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.first_name.id_for_label }}">First Name:</label>
+                {{ form.first_name }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.last_name.id_for_label }}">Last Name:</label>
+                {{ form.last_name }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email:</label>
+                {{ form.email }}
+            </div>
+        
+            <div class="form-group">
+                <label for="{{ form.date_joined.id_for_label }}">Date Joined:</label>
+                {{ form.date_joined }}
+            </div>
+            <br>
+        
+            <div class="form-group">
+                <label  for="{{ form.is_active.id_for_label }}">Delete account:  {{ form.is_active }}</label>
+            </div>
+            <br>
+
+
+            <button type="submit" class="submit-button">Update</button>
+        </form>
+        {% endif %}
+    </div>
+
+    <script>
+        const toggleButton = document.querySelector('.menu-toggle');
+        const navbarMenu = document.querySelector('.navbar-menu');
+    
+        toggleButton.addEventListener('click', () => {
+            navbarMenu.classList.toggle('active');
+        });
+    </script>
+    
+
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Seller Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/seller_dashboard.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-store"></i> Seller-Panel
+            </div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item active"><a href="{% url 'seller_dashboard' %}" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li class="sidebar-item"><a href="{% url 'home' %}" class="sidebar-link"><i class="fas fa-home"></i> Store Home</a></li>
+                <li class="sidebar-item"><a href="{% url 'seller_products' %}" class="sidebar-link"><i class="fas fa-box"></i> Products</a></li>
+                <li class="sidebar-item"><a href="#" class="sidebar-link"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+                <li class="sidebar-item"><a href="#" class="sidebar-link"><i class="fas fa-users"></i> Customers</a></li>
+                <li class="sidebar-item"><a href="{% url 'api' %}" class="sidebar-link"><i class="fa-solid fa-server"></i></i> API</a></li>
+                <li class="sidebar-item"><a href="{% url 'become_seller' %}" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a></li>
+                <li class="sidebar-item"><a href="{% url 'add_product' %}" class="sidebar-link"><i class="fas fa-plus"></i> Add Product</a></li>  
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'logout' %}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+        <header class="header">
+            <button class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-search">
+                <input type="text" placeholder="Search...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div class="header-actions">
+                <div class="notification-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count">3</span>
+                </div>
+                <div class="user-profile">
+                    {% if user.profile_image %}
+                    {% comment %} <img src="{{ user.profile_image.url }}" alt="{{ user.username }}"> {% endcomment %}
+                    <img src="https://img.freepik.com/free-vector/user-circles-set_78370-4704.jpg" alt="{{ user.username }}">
+                    {% else %}
+                    {% comment %} <img src="{% static 'images/default-profile.png' %}" alt="{{ user.username }}"> {% endcomment %}
+                    <img src="https://img.freepik.com/free-vector/user-circles-set_78370-4704.jpg" alt="{{ user.username }}">
+                    {% endif %}
+                    <span>{{ user.username }}</span>
+                </div>
+            </div>
+        </header>
+        <main class="main">
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <div class="date-filter">
+                    <select id="timeRange">
+                        <option value="today">Today</option>
+                        <option value="week" selected>This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="year">This Year</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon orders">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Total Orders</h3>
+                        <p class="stat-value">{{ total_orders|default:"0" }}</p>
+                        <p class="stat-change increase">
+                            <i class="fas fa-arrow-up"></i> 12.5% from last week
+                        </p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Total Revenue</h3>
+                        <p class="stat-value">${{ total_revenue|default:"0.00" }}</p>
+                        <p class="stat-change increase">
+                            <i class="fas fa-arrow-up"></i> 8.3% from last week
+                        </p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon products">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Total Products</h3>
+                        <p class="stat-value">{{ total_products|default:"0" }}</p>
+                        <p class="stat-change increase">
+                            <i class="fas fa-arrow-up"></i> 5.2% from last week
+                        </p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon customers">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Total Customers</h3>
+                        <p class="stat-value">{{ total_customers|default:"0" }}</p>
+                        <p class="stat-change increase">
+                            <i class="fas fa-arrow-up"></i> 3.7% from last week
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-row">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>Sales Overview</h2>
+                        <div class="chart-actions">
+                            <button class="chart-action active" data-period="week">Week</button>
+                            <button class="chart-action" data-period="month">Month</button>
+                            <button class="chart-action" data-period="year">Year</button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="top-products">
+                    <div class="section-header">
+                        <h2>Top Selling Products</h2>
+                        <a href="{% url 'seller_products' %}" class="view-all">View All</a>
+                    </div>
+                    <div class="product-list">
+                        {% if top_products %}
+                            {% for product in top_products %}
+                            <div class="product-item">
+                                <div class="product-image">
+                                    {% if product.product_image %}
+                                    <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}">
+                                    {% else %}
+                                    <div class="no-image"><i class="fas fa-box"></i></div>
+                                    {% endif %}
+                                </div>
+                                <div class="product-info">
+                                    <h3>{{ product.product_name }}</h3>
+                                    <p class="product-price">${{ product.product_price }}</p>
+                                    <p class="product-sold">{{ product.sold_count }} sold</p>
+                                </div>
+                                <div class="product-progress">
+                                    <div class="progress-bar" style="width: {{ product.progress_percentage }}%"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <p>No products sold yet</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-row">
+                <div class="recent-orders">
+                    <div class="section-header">
+                        <h2>Recent Orders</h2>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if recent_orders %}
+                                    {% for order in recent_orders %}
+                                    <tr>
+                                        <td>#{{ order.order_id }}</td>
+                                        <td>{{ order.customer_name }}</td>
+                                        <td>{{ order.order_date|date:"M d, Y" }}</td>
+                                        <td>${{ order.total_amount }}</td>
+                                        <td>
+                                            <span class="status-badge {{ order.status|lower }}">
+                                                {{ order.status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'order_detail' order.id %}" class="action-btn">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="empty-table">No recent orders</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="inventory-status">
+                    <div class="section-header">
+                        <h2>Inventory Status</h2>
+                        <a href="{% url 'seller_products' %}" class="view-all">View All</a>
+                    </div>
+                    <div class="inventory-stats">
+                        <div class="inventory-stat">
+                            <div class="stat-circle in-stock">
+                                <span>{{ in_stock_percentage|default:"0" }}%</span>
+                            </div>
+                            <div class="stat-label">In Stock</div>
+                        </div>
+                        <div class="inventory-stat">
+                            <div class="stat-circle low-stock">
+                                <span>{{ low_stock_percentage|default:"0" }}%</span>
+                            </div>
+                            <div class="stat-label">Low Stock</div>
+                        </div>
+                        <div class="inventory-stat">
+                            <div class="stat-circle out-of-stock">
+                                <span>{{ out_of_stock_percentage|default:"0" }}%</span>
+                            </div>
+                            <div class="stat-label">Out of Stock</div>
+                        </div>
+                    </div>
+                    <div class="low-stock-alert">
+                        <h3>Low Stock Alert</h3>
+                        {% if low_stock_products %}
+                            <ul class="low-stock-list">
+                                {% for product in low_stock_products %}
+                                <li>
+                                    <span class="product-name">{{ product.product_name }}</span>
+                                    <span class="stock-count">{{ product.stock }} left</span>
+                                    <a href="{% url 'edit_product' product.id %}" class="restock-btn">Restock</a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="empty-state">No products with low stock</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sidebar toggle for mobile
+        document.querySelector('.sidebar-toggle').addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+        
+        // Sales Chart
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Sales',
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    backgroundColor: 'rgba(74, 109, 229, 0.2)',
+                    borderColor: 'rgba(74, 109, 229, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Chart period buttons
+        const chartActions = document.querySelectorAll('.chart-action');
+        chartActions.forEach(button => {
+            button.addEventListener('click', () => {
+                chartActions.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                const period = button.dataset.period;
+                let labels, data;
+                
+                if (period === 'week') {
+                    labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                    data = [65, 59, 80, 81, 56, 55, 40];
+                } else if (period === 'month') {
+                    labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+                    data = [280, 250, 340, 220];
+                } else if (period === 'year') {
+                    labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    data = [750, 680, 950, 870, 920, 1020, 980, 1100, 1050, 1150, 1250, 1350];
+                }
+                
+                salesChart.data.labels = labels;
+                salesChart.data.datasets[0].data = data;
+                salesChart.update();
+            });
+        });
+        
+        // Time range filter
+        document.getElementById('timeRange').addEventListener('change', function() {
+            // Here you would typically make an AJAX request to update the dashboard data
+            console.log('Time range changed to:', this.value);
+        });
+    </script>
+</body>
+</html>

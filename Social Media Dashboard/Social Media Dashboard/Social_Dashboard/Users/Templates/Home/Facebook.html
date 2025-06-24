@@ -1,0 +1,381 @@
+{% extends 'Home/Base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Facebook - Social Media Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" data-aos="fade-up">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="facebook-icon-bg me-4">
+                            <i class="fab fa-facebook-f fa-2x text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="mb-1">Facebook</h2>
+                            <p class="text-muted mb-0">Manage your Facebook page and posts</p>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="{% url 'create_post' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i> Create Post
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if error %}
+    <!-- Error Alert -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i> Connection Error</h4>
+                <p>There was a problem connecting to Facebook: {{ error }}</p>
+                <hr>
+                <p class="mb-0">Please check your Facebook access token or try reconnecting your account.</p>
+                <button class="btn btn-outline-danger mt-3">
+                    <i class="fas fa-sync me-2"></i> Reconnect Facebook
+                </button>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    
+    <!-- Profile and Stats Section -->
+    <div class="row mb-4">
+        <!-- Profile Card -->
+<div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+    <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <div class="position-relative d-inline-block">
+                    <img src="{% if profile.picture %}{{ profile.picture.data.url }}{% else %}https://graph.facebook.com/{{ profile.id }}/picture?type=large{% endif %}" alt="Profile Picture" class="rounded-circle mb-3" width="100" height="100">
+                    <span class="position-absolute bottom-0 end-0 bg-success rounded-circle p-2 border border-white"></span>
+                </div>
+                <h4 class="mb-1">{{ profile.name|default:"Facebook User" }}</h4>
+                <p class="text-muted">{{ profile.email|default:"" }}</p>
+                <div class="d-flex justify-content-center">
+                    <a href="{% if profile.id %}https://facebook.com/{{ profile.id }}{% else %}#{% endif %}" target="_blank" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-external-link-alt me-2"></i> View Profile
+                    </a>
+                </div>
+            </div>
+            <hr>
+            <h6 class="mb-3">Account Information</h6>
+            <div class="mb-2 d-flex justify-content-between">
+                <span class="text-muted">Account ID:</span>
+                <span>{{ profile.id|default:"Not available" }}</span>
+            </div>
+            <div class="mb-2 d-flex justify-content-between">
+                <span class="text-muted">Connected:</span>
+                <span class="badge {% if profile.is_active %}bg-success{% else %}bg-warning{% endif %}">
+                    {{ profile.connection_status|default:"Active" }}
+                </span>
+            </div>
+            {% if profile.last_updated %}
+            <div class="mb-2 d-flex justify-content-between">
+                <span class="text-muted">Last Updated:</span>
+                <span>{{ profile.last_updated|date:"M d, Y" }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="col-lg-8 mb-4">
+    <div class="row h-100">
+        <div class="col-md-4 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="200">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle bg-primary text-white">
+                            <i class="fas fa-thumbs-up"></i>
+                        </div>
+                        <h6 class="ms-3 mb-0">Page Likes</h6>
+                    </div>
+                    <h3 class="mb-0">{{ stats.page_likes|default:"0"|intcomma }}</h3>
+                    <div class="small {% if stats.likes_change >= 0 %}text-success{% else %}text-danger{% endif %} mt-2">
+                        <i class="fas fa-{% if stats.likes_change >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i> 
+                        {{ stats.likes_change|default:"0" }}% {% if stats.likes_change >= 0 %}increase{% else %}decrease{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="300">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle bg-success text-white">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h6 class="ms-3 mb-0">Engagement</h6>
+                    </div>
+                    <h3 class="mb-0">{{ stats.engagement|default:"0" }}%</h3>
+                    <div class="small {% if stats.engagement_change >= 0 %}text-success{% else %}text-danger{% endif %} mt-2">
+                        <i class="fas fa-{% if stats.engagement_change >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i> 
+                        {{ stats.engagement_change|default:"0" }}% {% if stats.engagement_change >= 0 %}increase{% else %}decrease{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle bg-info text-white">
+                            <i class="fas fa-share-alt"></i>
+                        </div>
+                        <h6 class="ms-3 mb-0">Shares</h6>
+                    </div>
+                    <h3 class="mb-0">{{ stats.shares|default:"0"|intcomma }}</h3>
+                    <div class="small {% if stats.shares_change >= 0 %}text-success{% else %}text-danger{% endif %} mt-2">
+                        <i class="fas fa-{% if stats.shares_change >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i> 
+                        {{ stats.shares_change|default:"0" }}% {% if stats.shares_change >= 0 %}increase{% else %}decrease{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    <!-- Posts Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Posts</h5>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-filter me-1"></i> Filter
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#">All Posts</a></li>
+                            <li><a class="dropdown-item" href="#">Published</a></li>
+                            <li><a class="dropdown-item" href="#">Scheduled</a></li>
+                            <li><a class="dropdown-item" href="#">Drafts</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    {% if posts %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Post</th>
+                                        <th>Created</th>
+                                        <th>Engagement</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for post in posts %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if post.full_picture %}
+                                                <img src="{{ post.full_picture }}" alt="Post thumbnail" class="rounded me-3" width="60" height="60" style="object-fit: cover;">
+                                                {% else %}
+                                                <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                                    <i class="fab fa-facebook text-primary fa-lg"></i>
+                                                </div>
+                                                {% endif %}
+                                                <div>
+                                                    <h6 class="mb-1">{{ post.message|truncatechars:50|default:"No message content" }}</h6>
+                                                    <small class="text-muted">ID: {{ post.id }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ post.created_time|date:"M d, Y" }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <span class="me-2"><i class="far fa-thumbs-up text-primary"></i> {{ post.likes.summary.total_count|default:"0" }}</span>
+                                                <span class="me-2"><i class="far fa-comment text-info"></i> {{ post.comments.summary.total_count|default:"0" }}</span>
+                                                <span><i class="far fa-share-square text-success"></i> {{ post.shares.count|default:"0" }}</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-success">Published</span></td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li><a class="dropdown-item" href="https://facebook.com/{{ post.id }}" target="_blank"><i class="fas fa-external-link-alt me-2"></i> View</a></li>
+                                                    <li><a class="dropdown-item" href="#"><i class="fas fa-chart-bar me-2"></i> Analytics</a></li>
+                                                    <li><a class="dropdown-item" href="#"><i class="fas fa-pen me-2"></i> Edit</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash-alt me-2"></i> Delete</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+                            <h5>No Posts Found</h5>
+                            <p class="text-muted">You haven't published any posts yet or we couldn't retrieve them.</p>
+                            <a href="{% url 'create_post' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i> Create Your First Post
+                            </a>
+                            
+                        </div>
+                    {% endif %}
+                </div>
+                {% if posts %}
+                <div class="card-footer bg-white text-center">
+                    <nav>
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1"><i class="fas fa-chevron-left"></i></a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Insights Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Page Insights</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <canvas id="insightsChart" height="300"></canvas>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="mb-3">Audience Demographics</h6>
+                            <div class="mb-4">
+                                <h6 class="small text-muted mb-2">Gender</h6>
+                                <div class="progress mb-2" style="height: 10px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 58%;" aria-valuenow="58" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: 42%;" aria-valuenow="42" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <small><i class="fas fa-mars text-primary me-1"></i> Male (58%)</small>
+                                    <small><i class="fas fa-venus text-info me-1"></i> Female (42%)</small>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h6 class="small text-muted mb-2">Age Groups</h6>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small>18-24</small>
+                                        <small>15%</small>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-success" style="width: 15%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small>25-34</small>
+                                        <small>42%</small>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-success" style="width: 42%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small>35-44</small>
+                                        <small>28%</small>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-success" style="width: 28%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small>45+</small>
+                                        <small>15%</small>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-success" style="width: 15%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Only initialize chart if the element exists
+        const chartElement = document.getElementById('insightsChart');
+        if (chartElement) {
+            const ctx = chartElement.getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'Page Views',
+                        data: [1200, 1900, 1700, 2100, 2500, 2200, 2800],
+                        borderColor: '#4267B2',
+                        backgroundColor: 'rgba(66, 103, 178, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Engagement',
+                        data: [500, 700, 600, 800, 950, 850, 1000],
+                        borderColor: '#36A2EB',
+                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Page Performance (Last 7 Months)'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

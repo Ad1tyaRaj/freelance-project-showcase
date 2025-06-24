@@ -1,0 +1,297 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Products - ShopEasy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product.css' %}">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>ShopEasy</h1>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search for products...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div class="user-actions">
+                {% if user.is_authenticated %}
+                <a href="{% url 'account' %}" class="icon-link"><i class="fas fa-user"></i> Account</a>
+                <a href="#" class="icon-link"><i class="fas fa-heart"></i> Wishlist</a>
+                <a href="{% url 'cart' %}" class="icon-link cart"><i class="fas fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
+                {% else %}
+                <a href="{% url 'login' %}" class="icon-link"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+                <a href="{% url 'signup' %}" class="icon-link"><i class="fa-solid fa-user-plus"></i> Register</a>
+                <a href="#" class="icon-link"><i class="fas fa-heart"></i> Wishlist</a>
+                <a href="{% url 'cart' %}" class="icon-link cart"><i class="fas fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <ul class="main-nav">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li class="dropdown">
+                    <a href="#">Categories <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-content">
+                        <a href="#">Electronics</a>
+                        <a href="#">Clothing</a>
+                        <a href="#">Home & Kitchen</a>
+                        <a href="#">Books</a>
+                        <a href="#">Beauty</a>
+                    </div>
+                </li>
+                <li><a href="#">New Arrivals</a></li>
+                <li><a href="#">Best Sellers</a></li>
+                <li><a href="#">Deals</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Title -->
+    <section class="page-title">
+        <div class="container">
+            <h1>All Products</h1>
+            <div class="breadcrumb">
+                <a href="{% url 'home' %}">Home</a> / <span>Products</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Filters -->
+    <section class="product-filters">
+        <div class="container">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <h4>Categories</h4>
+                    <div class="filter-options">
+                        <label class="filter-checkbox">
+                            <input type="checkbox"> Electronics
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox"> Clothing
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox"> Home & Kitchen
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox"> Books
+                        </label>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <h4>Price Range</h4>
+                    <div class="price-range">
+                        <input type="number" placeholder="Min">
+                        <span>to</span>
+                        <input type="number" placeholder="Max">
+                    </div>
+                </div>
+            </div>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <h4>Brand</h4>
+                    <div class="filter-options">
+                        <label class="filter-checkbox">
+                            <input type="checkbox"> Apple
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox"> Samsung
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox"> Sony
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox"> Nike
+                        </label>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <h4>Rating</h4>
+                    <div class="filter-options">
+                        <label class="filter-checkbox">
+                            <input type="checkbox"> 4★ & above
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox"> 3★ & above
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox"> 2★ & above
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn reset-btn">Reset</button>
+                <button class="filter-btn apply-btn">Apply Filters</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="container">
+            <div class="products-header">
+                <div class="results-count">
+                    <p>Showing 1-12 of 36 products</p>
+                </div>
+                <div class="sort-options">
+                    <span>Sort by:</span>
+                    <select>
+                        <option>Featured</option>
+                        <option>Price: Low to High</option>
+                        <option>Price: High to Low</option>
+                        <option>Customer Rating</option>
+                        <option>Newest</option>
+                    </select>
+                </div>
+                <div class="view-options">
+                    <button class="view-btn active"><i class="fas fa-th"></i></button>
+                    <button class="view-btn"><i class="fas fa-list"></i></button>
+                </div>
+            </div>
+            {% if products %}
+            {% for product in products %}
+            <div class="product-grid">
+                <!-- Product 1 -->
+
+                <div class="product-card">
+                    <div class="product-badge">{{product.product_badge}}</div>
+                    <div class="product-image">
+                        <img src="{{ product.image_url }}" alt="{{ product.product_name }}">
+                        <div class="product-actions">
+                            <button class="action-btn"><i class="fas fa-heart"></i></button>
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'add_to_cart' product.id %}">
+                                <button class="action-btn">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </a>
+                            {% else %}
+                            <a href="{% url 'login' %}">
+                                <button class="action-btn">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'products' %}">
+                                <button class="action-btn">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>{{product.product_name}}</h3>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>({{product.product_reviews}})</span>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <div class="product-price">
+                            <span class="current-price">${{product.product_price}}</span>
+                            <span class="old-price">${{product.product_old_price}}</span> 
+                            <a href="{% url 'add_to_cart' product.id %}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border: none; border-radius: 5px; cursor: pointer;">Buy Now</a>
+                        </div>
+                        {% else %}
+                        <div class="product-price">
+                            <span class="current-price">${{product.product_price}}</span>
+                            <span class="old-price">${{product.product_old_price}}</span> 
+                            <a href="{% url 'login'  %}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border: none; border-radius: 5px; cursor: pointer;">Buy Now</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Additional products (12 total) would go here -->
+                <!-- For brevity, I'm not including all 12 products in this snippet -->
+            </div>
+            <br>
+            <br>
+            {% endfor %}
+            {% endif %}
+            
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <a href="#"><i class="fas fa-chevron-left"></i></a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">4</a>
+                <a href="#"><i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+    </section>
+    <br>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3>ShopEasy</h3>
+                    <p>Your one-stop destination for all your shopping needs. Quality products, great prices, and excellent customer service.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'products' %}">Shop</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="#">My Account</a></li>
+                        <li><a href="#">Order Tracking</a></li>
+                        <li><a href="#">Wishlist</a></li>
+                        <li><a href="#">Returns & Exchanges</a></li>
+                        <li><a href="#">Shipping Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Main Street, City, Country</li>
+                        <li><i class="fas fa-phone"></i> +1 234 567 890</li>
+                        <li><i class="fas fa-envelope"></i> info@shopeasy.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 ShopEasy. All Rights Reserved.</p>
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-cc-paypal"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

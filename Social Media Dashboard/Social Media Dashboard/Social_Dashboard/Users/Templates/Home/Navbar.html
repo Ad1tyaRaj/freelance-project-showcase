@@ -1,0 +1,88 @@
+<!-- Top Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center">
+            <span class="toggle-sidebar me-3" id="toggleSidebar">
+                <i class="fas fa-bars"></i>
+            </span>
+            <form class="d-none d-lg-block">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="search" class="form-control border-0 bg-light" placeholder="Search...">
+                </div>
+            </form>
+        </div>
+
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown me-3">
+                <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-bell fa-lg"></i>
+                    <span class="notification-badge">3</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <h6 class="dropdown-header">Notifications</h6>
+                    <a class="dropdown-item" href="#">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-heart text-danger"></i>
+                            </div>
+                            <div class="ms-3">
+                                <p class="mb-0">New likes on your post</p>
+                                <small class="text-muted">5 minutes ago</small>
+                            </div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item" href="#">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-comment text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <p class="mb-0">New comment on your post</p>
+                                <small class="text-muted">1 hour ago</small>
+                            </div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item" href="#">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-user-plus text-success"></i>
+                            </div>
+                            <div class="ms-3">
+                                <p class="mb-0">New follower</p>
+                                <small class="text-muted">3 hours ago</small>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item text-center" href="#">View all notifications</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown profile-dropdown">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                    data-bs-toggle="dropdown">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile"
+                        class="avatar me-2">
+                    <span class="d-none d-lg-block">John Doe</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <a class="dropdown-item" href="#">
+                        <i class="fas fa-user me-2"></i> My Profile
+                    </a>
+                    <a class="dropdown-item" href="#">
+                        <i class="fas fa-cog me-2"></i> Account Settings
+                    </a>
+                    <a class="dropdown-item" href="#">
+                        <i class="fas fa-question-circle me-2"></i> Help Center
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

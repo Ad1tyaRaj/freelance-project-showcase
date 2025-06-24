@@ -1,0 +1,498 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - ShopEasy</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>ShopEasy</h1>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search for products...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div class="user-actions">
+                {% if user.is_authenticated %}
+                <a href="{% url 'account' %}" class="icon-link"><i class="fas fa-user"></i> Account</a>
+                <a href="#" class="icon-link"><i class="fas fa-heart"></i> Wishlist</a>
+                <a href="{% url 'cart' %}" class="icon-link cart"><i class="fas fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
+                {% else %}
+                <a href="{% url 'login' %}" class="icon-link"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+                <a href="{% url 'signup' %}" class="icon-link"><i class="fa-solid fa-user-plus"></i> Register</a>
+                <a href="#" class="icon-link"><i class="fas fa-heart"></i> Wishlist</a>
+                <a href="{% url 'cart' %}" class="icon-link cart"><i class="fas fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <ul class="main-nav">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li class="dropdown">
+                    <a href="#">Categories <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-content">
+                        <a href="#">Electronics</a>
+                        <a href="#">Clothing</a>
+                        <a href="#">Home & Kitchen</a>
+                        <a href="#">Books</a>
+                        <a href="#">Beauty</a>
+                    </div>
+                </li>
+                <li><a href="#">New Arrivals</a></li>
+                <li><a href="#">Best Sellers</a></li>
+                <li><a href="#">Deals</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Account Section -->
+    <section class="account-container">
+        <div class="container">
+            <div class="account-header">
+                <h1>My Account</h1>
+                <p>Welcome back, {{ user.first_name }}!</p>
+            </div>
+            
+            <div class="account-grid">
+                <div class="account-sidebar">
+                    <ul class="account-menu">
+                        <li><a href="#" class="active" data-tab="profile"><i class="fas fa-user"></i> Profile</a></li>
+                        <li><a href="#" data-tab="orders"><i class="fas fa-box"></i> Orders</a></li>
+                        <li><a href="#" data-tab="addresses"><i class="fas fa-map-marker-alt"></i> Addresses</a></li>
+                        <li><a href="#" data-tab="wishlist"><i class="fas fa-heart"></i> Wishlist</a></li>
+                        <li><a href="#" data-tab="payment"><i class="fas fa-credit-card"></i> Payment Methods</a></li>
+                        <li><a href="#" data-tab="settings"><i class="fas fa-cog"></i> Settings</a></li>
+                    </ul>
+                </div>
+                
+                <div class="account-content">
+                    <!-- Profile Tab -->
+                    <div class="tab-content active" id="profile">
+                        <h2 class="section-title">Personal Information</h2>
+                        <form class="profile-form" method="post" action="{% url 'update_profile' %}">
+                            {% csrf_token %}
+                            <div class="profile-info">
+                                <div class="info-group">
+                                    <label for="first-name">First Name</label>
+                                    <input type="text" id="first-name" name="first_name" value="{{ user.first_name }}">
+                                </div>
+                                <div class="info-group">
+                                    <label for="last-name">Last Name</label>
+                                    <input type="text" id="last-name" name="last_name" value="{{ user.last_name }}">
+                                </div>
+                                <div class="info-group">
+                                    <label for="email">Email Address</label>
+                                    <input type="email" id="email" name="email" value="{{ user.email }}">
+                                </div>
+                                <div class="info-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" id="phone" name="phone" value="{{ user.profile.phone|default:'' }}">
+                                </div>
+                            </div>
+                            <button type="submit" class="save-btn">Save Changes</button>
+                        </form>
+
+                        
+                        <h2 class="section-title" style="margin-top: 30px;">Change Password</h2>
+                        <form class="password-form" method="post" action="#">
+                            {% csrf_token %}
+                            <div class="profile-info">
+                                <div class="info-group">
+                                    <label for="current-password">Current Password</label>
+                                    <input type="password" id="current-password" name="current_password" required>
+                                </div>
+                                <div class="info-group">
+                                    <label for="new-password">New Password</label>
+                                    <input type="password" id="new-password" name="new_password" required>
+                                </div>
+                                <div class="info-group">
+                                    <label for="confirm-password">Confirm New Password</label>
+                                    <input type="password" id="confirm-password" name="confirm_password" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="save-btn">Update Password</button>
+                        </form>
+
+                    </div>
+                    
+
+                <!-- Orders Tab -->
+                <div class="tab-content" id="orders">
+                    <h2 class="section-title">My Orders</h2>
+                    {% if orders %}
+                    <div class="order-list">
+                        {% for order in orders %}
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div>
+                                    <div class="order-id">Order #{{ order.id }}</div>
+                                    <div class="order-date">Placed on {{ order.created_at|date:"F d, Y" }}</div>
+                                </div>
+                                <div class="order-status">
+                                    <span class="status-{{ order.status|lower }}">{{ order.status }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="order-items">
+                                {% for item in order.items.all|slice:":3" %}
+                                <div class="order-item">
+                                    <div class="item-image">
+                                        <img src="{{ item.item_image.url }}" alt="{{ item.item_name }}">
+                                    </div>
+                                    <div class="item-details">
+                                        <div class="item-name">{{ item.item_name }}</div>
+                                        <div class="item-price">${{ item.item_price }}</div>
+                                        <div class="item-quantity">Qty: {{ item.item_quantity }}</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                
+                                {% if order.items.count > 3 %}
+                                <div class="more-items">
+                                    <span>+{{ order.items.count|add:"-3" }} more items</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="order-footer">
+                                <div class="order-details">
+                                    <div class="order-total">
+                                        <span>Total:</span>
+                                        <span>${{ order.total_price }}</span>
+                                    </div>
+                                    {% if order.promocode %}
+                                    <div class="order-promo">
+                                        <span>Promo Code:</span>
+                                        <span>{{ order.promocode }}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="order-actions">
+                                    <a href="{% url 'order_detail' order.id %}" class="order-btn view-btn">View Details</a>
+                                    {% if order.status == 'Processing' or order.status == 'Shipped' %}
+                                    <a href="#" class="order-btn track-btn">Track Order</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-box-open"></i>
+                        <p>You haven't placed any orders yet.</p>
+                        <a href="{% url 'products' %}" class="btn">Start Shopping</a>
+                    </div>
+                    {% endif %}
+                </div>
+                                    
+                    <!-- Addresses Tab -->
+                    <div class="tab-content" id="addresses">
+                        <h2 class="section-title">My Addresses</h2>
+                        {% if addresses %}
+                        <div class="address-list">
+                            {% for address in addresses %}
+                            <div class="address-card">
+                                {% if address.is_default %}
+                                <div class="address-type">Default</div>
+                                {% endif %}
+                                <div class="address-name">{{ address.full_name }}</div>
+                                <div class="address-details">
+                                    {{ address.street_address }}<br>
+                                    {% if address.apartment %}{{ address.apartment }}<br>{% endif %}
+                                    {{ address.city }}, {{ address.state }} {{ address.zip_code }}<br>
+                                    {{ address.country }}<br>
+                                    Phone: {{ address.phone }}
+                                </div>
+                                <div class="address-actions">
+                                    <a href="{% url 'edit_address' address.id %}" class="address-btn edit-btn">Edit</a>
+                                    <a href="{% url 'delete_address' address.id %}" class="address-btn delete-btn">Delete</a>
+                                    {% if not address.is_default %}
+                                    <a href="{% url 'set_default_address' address.id %}" class="address-btn">Set as Default</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <a href="{% url 'add_address' %}" class="add-address-btn">
+                                <i class="fas fa-plus"></i> Add New Address
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <p>You haven't added any addresses yet.</p>
+                            <a href="#" class="btn">Add Address</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Wishlist Tab -->
+                    <div class="tab-content" id="wishlist">
+                        <h2 class="section-title">My Wishlist</h2>
+                        {% if wishlist_items %}
+                        <div class="wishlist-grid">
+                            {% for item in wishlist_items %}
+                            <div class="wishlist-item">
+                                <div class="wishlist-image">
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                                </div>
+                                <div class="wishlist-info">
+                                    <div class="wishlist-name">{{ item.product.name }}</div>
+                                    <div class="wishlist-price">${{ item.product.price }}</div>
+                                    <div class="wishlist-actions">
+                                        <form method="post" action="{% url 'add_to_cart' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                                            <button type="submit" class="wishlist-btn cart-btn">Add to Cart</button>
+                                        </form>
+                                        <form method="post" action="{% url 'remove_from_wishlist' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="item_id" value="{{ item.id }}">
+                                            <button type="submit" class="wishlist-btn remove-btn">Remove</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-heart"></i>
+                            <p>Your wishlist is empty.</p>
+                            <a href="{% url 'products' %}" class="btn">Explore Products</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Payment Methods Tab -->
+                    <div class="tab-content" id="payment">
+                        <h2 class="section-title">Payment Methods</h2>
+                        {% if payment_methods %}
+                        <div class="payment-methods">
+                            {% for method in payment_methods %}
+                            <div class="payment-card">
+                                <div class="card-icon">
+                                    {% if method.card_type == 'visa' %}
+                                    <i class="fab fa-cc-visa"></i>
+                                    {% elif method.card_type == 'mastercard' %}
+                                    <i class="fab fa-cc-mastercard"></i>
+                                    {% elif method.card_type == 'amex' %}
+                                    <i class="fab fa-cc-amex"></i>
+                                    {% else %}
+                                    <i class="fas fa-credit-card"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="card-details">
+                                    <div class="card-number">**** **** **** {{ method.last_four }}</div>
+                                    <div class="card-expiry">Expires {{ method.expiry_month }}/{{ method.expiry_year }}</div>
+                                </div>
+                                {% if method.is_default %}
+                                <div class="card-default">Default</div>
+                                {% endif %}
+                                <div class="card-actions">
+                                    <a href="#" class="address-btn edit-btn">Edit</a>
+                                    <a href="#" class="address-btn delete-btn">Delete</a>
+                                    {% if not method.is_default %}
+                                    <a href="#" class="address-btn">Set as Default</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <a href="#% url 'add_payment_method' %}" class="add-card-btn">
+                                <i class="fas fa-plus"></i> Add New Payment Method
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-credit-card"></i>
+                            <p>You haven't added any payment methods yet.</p>
+                            <a href="#" class="btn">Add Payment Method</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Settings Tab -->
+                    <div class="tab-content" id="settings">
+                        <h2 class="section-title">Account Settings</h2>
+                        <form method="post" action="#">
+                            {% csrf_token %}
+                            <div class="settings-section">
+                                <h3>Notifications</h3>
+                                <div class="settings-option">
+                                    <div>
+                                        <div class="option-label">Email Notifications</div>
+                                        <div class="option-description">Receive order updates and promotional offers via email</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="email_notifications" {% if user.profile.email_notifications %}checked{% endif %}>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="settings-option">
+                                    <div>
+                                        <div class="option-label">SMS Notifications</div>
+                                        <div class="option-description">Receive order updates via SMS</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="sms_notifications" {% if user.profile.sms_notifications %}checked{% endif %}>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-section">
+                                <h3>Privacy</h3>
+                                <div class="settings-option">
+                                    <div>
+                                        <div class="option-label">Show Recently Viewed</div>
+                                        <div class="option-description">Display your recently viewed products</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="show_recently_viewed" {% if user.profile.show_recently_viewed %}checked{% endif %}>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="settings-option">
+                                    <div>
+                                        <div class="option-label">Personalized Recommendations</div>
+                                        <div class="option-description">Allow us to suggest products based on your browsing history</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="personalized_recommendations" {% if user.profile.personalized_recommendations %}checked{% endif %}>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="save-btn">Save Settings</button>
+                        </form><br>
+                        {% if user.is_staff %}
+                        <form action="{% url 'become_seller' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-logout"><i class="fa-solid fa-truck"></i> Become a Seller</button>
+                        </form>
+                        {% endif %}
+                        
+                        <div class="danger-zone" style="margin-top: 40px;">
+                            <h3>Danger Zone</h3>
+                            <p>Once you delete your account, there is no going back. Please be certain.</p>
+                            <a href="" class="logout-btn" onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.')">Delete Account</a>
+                        </div>
+                        <br>
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-logout"><i class="fas fa-sign-out"></i> Logout</button>
+                        </form>
+                        
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+
+    
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3>ShopEasy</h3>
+                    <p>Your one-stop destination for all your shopping needs. Quality products, great prices, and excellent customer service.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'products' %}">Shop</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="{% url 'account' %}">My Account</a></li>
+                        <li><a href="#">Order Tracking</a></li>
+                        <li><a href="#">Wishlist</a></li>
+                        <li><a href="#">Returns & Exchanges</a></li>
+                        <li><a href="#">Shipping Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Main Street, City, Country</li>
+                        <li><i class="fas fa-phone"></i> +1 234 567 890</li>
+                        <li><i class="fas fa-envelope"></i> info@shopeasy.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 ShopEasy. All Rights Reserved.</p>
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-cc-paypal"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabLinks = document.querySelectorAll('.account-menu a');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links and contents
+                    tabLinks.forEach(l => l.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        });
+        
+    </script>
+</body>
+</html>

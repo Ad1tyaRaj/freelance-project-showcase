@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Notes Taking App</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">📝 MyNotes</div>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Notes</a></li>
+      <li><a href="#">About</a></li>
+    </ul>
+    <a href = '{% url "note-list" %}' ><button class="api-button" >Public API </button></a>
+    <a href = '{% url "register" %}' ><button class="api-button" > Register</button></a>
+    <a href = '{% url "Login" %}' ><button class="api-button" > Login</button></a>
+  </nav>
+
+  <h1>Notes Taking App</h1>
+
+  <form method="GET" action="/">
+    <input type="text" name="title" placeholder="Title (optional)" />
+    <textarea name="content" rows="4" placeholder="Write your note here..." required></textarea>
+    <button type="submit" class="save-btn">Save Note</button>
+  </form>
+
+  <ul class="notes-list" id="notes-list">
+    {% for note in notes %}
+      <li>
+        <strong>{{ note.title|default:"(No Title)" }}</strong>
+        <p>{{ note.content }}</p>
+        <small>{{ note.created_at|date:"M d, Y H:i" }}</small>
+      </li>
+    {% empty %}
+      <li>No notes yet. Start adding some!</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

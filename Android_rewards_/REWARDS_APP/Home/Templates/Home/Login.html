@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+{% load static%}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonRewards - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'Login.css' %}">
+</head>
+<body>
+    <div class="container">
+
+        <div class="branding">
+            <div class="branding-content">
+                <h1>NeonRewards</h1>
+                <p>The ultimate task management platform to boost your productivity.</p>
+                <div class="branding-features">
+                    <div class="branding-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Organize tasks efficiently</span>
+                    </div>
+                    <div class="branding-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Track your progress</span>
+                    </div>
+                    <div class="branding-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Team collaboration</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="logo">
+                <i class="fas fa-tasks"></i>
+                <span>NeonRewards</span>
+            </div>
+
+            <form id="loginForm" method="POST">
+                {% csrf_token %}
+                <h2 class="form-title">Welcome back!</h2>
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input name="username" type="username" id="loginEmail" class="form-input" placeholder="Enter your email">
+                    <i class="fas fa-envelope form-input-icon"></i>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input name="password" type="password" id="loginPassword" class="form-input" placeholder="Enter your password">
+                    <i class="fas fa-lock form-input-icon"></i>
+                </div>
+                <div class="forgot-password">
+                    <a href="#">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+
+                <!-- Alerts -->
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                <!-- Alerts End -->
+                <div class="social-login">
+                    <div class="social-login-text">Or login with</div>
+                    <div class="social-buttons">
+                        <a href="#" class="social-btn google"><i class="fab fa-google"></i></a>
+                        <a href="#" class="social-btn facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-btn twitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="signup-text">
+                    Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</body>
+</html>

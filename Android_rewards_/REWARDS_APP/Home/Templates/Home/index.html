@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+{% load static%}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonRewards</title>
+    <link rel="stylesheet" href="{% static 'Styles.css' %}">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-tasks"></i>
+            <span>NeonRewards</span>
+        </div>
+        <div class="navbar-menu" id="mobileMenu">
+            {% if user.is_superuser %}
+            <a href="{% url 'home' %}" class="navbar-item"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'add_task' %}" class="navbar-item"><i class="fas fa-list-check"></i> Tasks</a>
+            <a href="{% url 'api' %}" class="navbar-item"><i class="fas fa-cogs"></i> API</a>
+            <a href="{% url 'admin-dash' %}" class="navbar-item"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{% url 'profile' %}" class="navbar-item"><i class="fas fa-user"></i> Profile</a>
+            {% elif user.is_authenticated %}
+            <a href="{% url 'home' %}" class="navbar-item"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'task' %}" class="navbar-item"><i class="fas fa-list-check"></i> Tasks</a>
+            <a href="{% url 'api' %}" class="navbar-item"><i class="fas fa-cogs"></i> API</a>
+            <a href="{% url 'dashboard' %}" class="navbar-item"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{% url 'profile' %}" class="navbar-item"><i class="fas fa-user"></i> Profile</a>
+            {% else %}
+            <a href="{% url 'home' %}" class="navbar-item"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'task' %}" class="navbar-item"><i class="fas fa-list-check"></i> Tasks</a>
+            <a href="{% url 'api' %}" class="navbar-item"><i class="fas fa-cogs"></i> API</a>
+            <a href="{% url 'login' %}" class="navbar-item"><i class="fas fa-sign-in"></i> Login</a>
+            <a href="{% url 'signup' %}" class="navbar-item"><i class="fas fa-user-plus"></i> Sign Up</a>
+            {% endif %}
+        </div>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="page-title">
+            {% if user.is_authenticated %}
+            <h1>My Tasks</h1>
+            {% else %}
+            <h1>Welcome to NeonRewards</h1>
+            {% endif %}
+        </div>
+
+        <!-- Task Filters -->
+        <div class="task-filters">
+            <button class="filter-btn active">All Tasks</button>
+            <!-- Additional filter buttons can be uncommented if needed -->
+            <!-- <button class="filter-btn">In Progress</button> -->
+            <!-- <button class="filter-btn">Completed</button>
+            <button class="filter-btn">High Priority</button>
+            <button class="filter-btn">This Week</button> -->
+        </div>
+
+        <!-- Loading State -->
+        <div class="loader">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <!-- Task Grid -->
+        <div class="task-grid">
+            {% for app in apps %}
+            <!-- Task Card -->
+            <div class="task-card" style="animation-delay: {{ forloop.counter|divisibleby:3 }}0ms;">
+                <div class="task-header">
+                    <div>
+                        <h3 class="task-title">{{ app.name }}</h3>
+                        <p class="task-date"><i class="far fa-calendar"></i> Package: {{ app.package_name }}</p>
+                    </div>
+                    <span class="task-priority priority-high">High</span>
+                </div>
+                <p class="task-description">+{{ app.points }} points</p>
+                <div class="task-footer">
+                    <div class="task-progress">
+                        <div class="progress-text">Download</div>
+                    </div>
+                    <div class="task-actions">
+                        <!-- Download Button -->
+                        <button class="complete" title="Download">
+                            <a target="_blank" style="color: var(--light);" href="{{ app.download_link }}" class="fa-solid fa-download"></a>
+                        </button>
+                        <!-- Upload Button -->
+                        <button class="delete" title="Upload task">
+                            {% if user.is_superuser %}
+                            <a target="_blank" href="{% url 'add_task' %}" style="color: var(--light);" class="fa-solid fa-upload"></a>
+                            {% else %}
+                            <a target="_blank" href="{% url 'task' %}" style="color: var(--light);" class="fa-solid fa-upload"></a>
+                            {% endif %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- JavaScript for mobile menu toggle -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            menuToggle.addEventListener('click', function() {
+                mobileMenu.classList.toggle('active');
+                // Toggle between hamburger and X icon
+                const icon = menuToggle.querySelector('i');
+                if (icon.classList.contains('fa-bars')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!mobileMenu.contains(event.target) && !menuToggle.contains(event.target) && mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

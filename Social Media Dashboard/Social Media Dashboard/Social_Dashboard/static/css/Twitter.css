@@ -1,0 +1,23 @@
+/* Twitter specific styling */
+.twitter-icon-bg {
+    background-color: #1DA1F2;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-info-light {
+    background-color: rgba(13, 202, 240, 0.1);
+}

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEasy - Your Online Shopping Destination</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>ShopEasy</h1>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search for products...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div class="user-actions">
+                {% if user.is_authenticated %}
+                <a href="{% url 'account' %}" class="icon-link"><i class="fas fa-user"></i> Account</a>
+                <a href="#" class="icon-link"><i class="fas fa-heart"></i> Wishlist</a>
+                <a href="{% url 'cart' %}" class="icon-link cart"><i class="fas fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
+                {% else %}
+                <a href="{% url 'login' %}" class="icon-link"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+                <a href="{% url 'signup' %}" class="icon-link"><i class="fa-solid fa-user-plus"></i> Register</a>
+                <a href="#" class="icon-link"><i class="fas fa-heart"></i> Wishlist</a>
+                <a href="{% url 'cart' %}" class="icon-link cart"><i class="fas fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <ul class="main-nav">
+                <li><a href="#">Home</a></li>
+                <li class="dropdown">
+                    <a href="#">Categories <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-content">
+                        <a href="#">Electronics</a>
+                        <a href="#">Clothing</a>
+                        <a href="#">Home & Kitchen</a>
+                        <a href="#">Books</a>
+                        <a href="#">Beauty</a>
+                    </div>
+                </li>
+                <li><a href="#">New Arrivals</a></li>
+                <li><a href="#">Best Sellers</a></li>
+                <li><a href="#">Deals</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Summer Sale</h2>
+                <p>Up to 50% off on selected items</p>
+                <a href="{% url 'products' %}" class="btn">Shop Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Categories -->
+    <section class="featured-categories">
+        <div class="container">
+            <h2 class="section-title">Shop by Category</h2>
+            <div class="category-grid">
+                <div class="category-card">
+                    <img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Electronics">
+                    <h3>Electronics</h3>
+                </div>
+                <div class="category-card">
+                    <img src="https://images.unsplash.com/photo-1509319117193-57bab727e09d?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Clothing">
+                    <h3>Clothing</h3>
+                </div>
+                <div class="category-card">
+                    <img src="https://images.unsplash.com/photo-1556909212-d5b604d0c90d?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Home & Kitchen">
+                    <h3>Home & Kitchen</h3>
+                </div>
+                <div class="category-card">
+                    <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Books">
+                    <h3>Books</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="featured-products">
+        <div class="container">
+            <h2 class="section-title">Featured Products</h2>
+            <div class="product-grid">
+                {% if products %}
+                {% for product in products %}
+                <div class="product-card">
+                    <div class="product-badge">{{product.product_badge}}</div>
+                    <div class="product-image">
+                        <img src="{{product.product_image.url}}" alt="{{product.product_name}}">
+                        <div class="product-actions">
+                            <button class="action-btn"><i class="fas fa-heart"></i></button>
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'add_to_cart' product.id %}">
+                                <button class="action-btn">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </a>
+                            {% else %}
+                            <a href="{% url 'login' %}">
+                                <button class="action-btn">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'products' %}">
+                                <button class="action-btn">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>{{product.product_name}}</h3>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>({{product.product_reviews}})</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">${{product.product_price}}</span>
+                            <span class="old-price">${{product.product_old_price}}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+            <div class="view-more">
+                <a href="{% url 'products' %}" class="btn">View All Products</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Offer Banner -->
+    <section class="special-offer">
+        <div class="container">
+            <div class="offer-content">
+                <h2>Special Offer</h2>
+                <p>Get an extra 10% off on your first purchase</p>
+                <p class="promo-code">Use code: <span>WELCOME10</span></p>
+                <a href="{% url 'products' %}" class="btn">Shop Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Subscribe to Our Newsletter</h2>
+                <p>Get updates on new products and special offers</p>
+                <form action="{% url 'newsletter' %}" method="POST" class="newsletter-form">
+                    {% csrf_token %}
+                    <input type="email" name="email" placeholder="Your email address" required>
+                    <button type="submit" class="btn">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3>ShopEasy</h3>
+                    <p>Your one-stop destination for all your shopping needs. Quality products, great prices, and excellent customer service.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Shop</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="#">My Account</a></li>
+                        <li><a href="#">Order Tracking</a></li>
+                        <li><a href="#">Wishlist</a></li>
+                        <li><a href="#">Returns & Exchanges</a></li>
+                        <li><a href="#">Shipping Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Main Street, City, Country</li>
+                        <li><i class="fas fa-phone"></i> +1 234 567 890</li>
+                        <li><i class="fas fa-envelope"></i> info@shopeasy.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 ShopEasy. All Rights Reserved.</p>
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-cc-paypal"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add to cart functionality
+        const addToCartButtons = document.querySelectorAll('.add-to-cart');
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+                addToCart(productId);
+            });
+        });
+
+        // Add to wishlist functionality
+        const addToWishlistButtons = document.querySelectorAll('.add-to-wishlist');
+        addToWishlistButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+                addToWishlist(productId);
+            });
+        });
+
+        // Quick view functionality
+        const quickViewButtons = document.querySelectorAll('.quick-view');
+        quickViewButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+                showQuickView(productId);
+            });
+        });
+
+        // Function to add product to cart
+        function addToCart(productId) {
+            fetch('/add-to-cart/' + productId + '/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    quantity: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update cart count
+                    document.querySelector('.cart-count').textContent = data.cart_items;
+                    
+                    // Show success message
+                    alert('Product added to cart!');
+                } else {
+                    alert(data.message || 'Error adding product to cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding to cart:', error);
+                alert('Error adding product to cart');
+            });
+        }
+
+        // Function to add product to wishlist
+        function addToWishlist(productId) {
+            fetch('/add-to-wishlist/' + productId + '/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Product added to wishlist!');
+                } else {
+                    alert(data.message || 'Error adding product to wishlist');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding to wishlist:', error);
+                alert('Error adding product to wishlist');
+            });
+        }
+
+        // Function to show quick view modal
+        function showQuickView(productId) {
+            fetch('/quick-view/' + productId + '/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Create and show modal with product details
+                    alert('Quick view for product ID: ' + productId);
+                } else {
+                    alert(data.message || 'Error loading product details');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading quick view:', error);
+                alert('Error loading product details');
+            });
+        }
+
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster - Mobile App Downloads & Points</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'Task.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-tasks"></i>
+            <span>NeonRewards</span>
+        </div>
+        <div class="navbar-menu" id="navbarMenu">
+            {% if user.is_superuser %}
+            <a href="{% url 'home' %}" class="navbar-item"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'add_task' %}" class="navbar-item"><i class="fas fa-list-check"></i> Tasks</a>
+            <a href="{% url 'api' %}" class="navbar-item"><i class="fas fa-cogs"></i> API</a>
+            <a href="{% url 'admin-dash' %}" class="navbar-item"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{% url 'profile' %}" class="navbar-item"><i class="fas fa-user"></i> Profile</a>
+            {% elif user.is_authenticated %}
+            <a href="{% url 'home' %}" class="navbar-item"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'task' %}" class="navbar-item"><i class="fas fa-list-check"></i> Tasks</a>
+            <a href="{% url 'dashboard' %}" class="navbar-item"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{% url 'profile' %}" class="navbar-item"><i class="fas fa-user"></i> Profile</a>
+            {% else %}
+            <a href="{% url 'home' %}" class="navbar-item"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'task' %}" class="navbar-item"><i class="fas fa-list-check"></i> Tasks</a>
+            <a href="{% url 'api' %}" class="navbar-item"><i class="fas fa-cogs"></i> API</a>
+            <a href="{% url 'login' %}" class="navbar-item"><i class="fas fa-sign-in"></i> Login</a>
+            <a href="{% url 'signup' %}" class="navbar-item"><i class="fas fa-user-plus"></i> Sign Up</a>
+            {% endif %}
+        </div>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <div class="container">
+        <div>
+            <h1 class="app-header" style="color: var(--primary);">Available Apps</h1>
+            <ul class="app-list">
+                {% if apps %}
+                {% for app in apps %}
+                <li class="app-item">
+                    <div class="app-info">
+                        {% if app.logo %}
+                        <img src="{{ app.logo.url }}" alt="{{ app.name }}" style="width: 50px; height: 50px; border-radius: 10px;">
+                        {% else %}
+                        <i class="fa-solid fa-mobile-screen-button app-icon"></i>
+                        {% endif %}
+                        <div class="app-details">
+                            <h3 class="app-title">{{ app.name }}</h3>
+                            <p class="app-points">+{{ app.points }} Points</p>
+                        </div>
+                    </div>
+                    <div class="app-details">
+                        <p style="text-align: center;" class="app-points">{{ app.package_name }}</p>
+                    </div>
+                    <a target="_blank" style="text-decoration: none;" href="{% url 'edit_task' app.id %}" class="download-button">Edit</a>
+                </li>
+                {% endfor %}
+                {% else %}
+                <li class="app-item">
+                    <div class="app-info">
+                        <i class="fa-solid fa-mobile-screen-button app-icon"></i>
+                        <div class="app-details">
+                            <h3 class="app-title">No Apps Available</h3>
+                            <p class="app-points">No apps available at the moment.</p>
+                        </div>
+                    </div>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        
+        <div class="points-board">
+            <h2 class="points-title">Your Points</h2>
+            {% if total_points > 0 %}
+            <p class="points-total">{{ total_points }}</p>
+            <p class="points-label">Total Earned Points</p>
+            {% else %}
+            <p class="points-total">0</p>
+            <p class="points-label">No points earned yet.</p>
+            {% endif %}
+            <p class="point-system-description">
+                <strong>Point System:</strong><br>
+                - Download apps to earn points.<br>
+                - Point values vary per app.<br>
+                - Redeem points for rewards!
+            </p>
+            <hr>
+            <p class="point-system-description">
+                <strong>Upload Screenshot:</strong><br>
+                - Upload screenshots to redeem points.<br>
+                - Points can be redeemed for rewards.<br>
+            </p>
+            <div class="form-container">
+                <form method="post" enctype="multipart/form-data" class="add-task-form">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        {{ field.label }} <br>
+                        {{ field }}
+                        <br>
+                    {% endfor %}
+                    <br>
+                    <button type="submit" class="download-button">Add Task</button>
+                    <button type="submit" class="download-button">Delete</button>
+                </form>
+            </div>
+        </div>  
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const navbarMenu = document.getElementById('navbarMenu');
+        
+        menuToggle.addEventListener('click', () => {
+            navbarMenu.classList.toggle('active');
+        });
+
+        function updateFileName() {
+            var fileInput = document.getElementById("upload-screenshot");
+            var fileNameDisplay = document.getElementById("file-name-display");
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = "Selected: " + fileInput.files[0].name;
+            } else {
+                fileNameDisplay.textContent = "";
+            }
+        }
+
+        function validateForm() {
+            var fileInput = document.getElementById("upload-screenshot");
+            if (fileInput.files.length === 0) {
+                alert("Please upload a screenshot before submitting.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

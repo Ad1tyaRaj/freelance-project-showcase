@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product - ShopEasy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/seller_product.css' %}">
+    <style>
+        .edit-product-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .edit-product-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .edit-product-header h1 {
+            color: #4a6de5;
+            margin-bottom: 0.5rem;
+        }
+        
+        .edit-product-header p {
+            color: #666;
+        }
+        
+        .edit-product-form-container {
+            padding: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .half {
+            flex: 1;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .form-help {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .form-errors {
+            background-color: #ffebee;
+            color: #d32f2f;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: #4a6de5;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5bd4;
+        }
+        
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .btn-danger {
+            background-color: #d63031;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Image upload styling */
+        .image-upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .image-preview {
+            width: 200px;
+            height: 200px;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .image-preview i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 0.5rem;
+        }
+        
+        .image-preview p {
+            color: #999;
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .custom-file-upload {
+            background-color: #4a6de5;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .custom-file-upload:hover {
+            background-color: #3a5bd4;
+        }
+        
+        @media (max-width: 768px) {
+            .edit-product-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-store"></i>
+            <span>Seller Dashboard</span>
+        </div>
+        <div class="navbar-menu" id="navbarMenu">
+            <a href="{% url 'home' %}" class="navbar-item"><i class="fas fa-home"></i> Store Home</a>
+            <a href="{% url 'seller_products' %}" class="navbar-item active"><i class="fas fa-box"></i> Products</a>
+            <a href="#" class="navbar-item"><i class="fas fa-shopping-cart"></i> Orders</a>
+            <a href="{% url 'seller_dashboard' %}" class="navbar-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="{% url 'account' %}" class="navbar-item"><i class="fas fa-user"></i> Account</a>
+        </div>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <div class="container">
+        <div class="edit-product-container">
+            <div class="edit-product-header">
+                <h1>Edit Product</h1>
+                <p>Update your product information below</p>
+            </div>
+
+            <div class="edit-product-form-container">
+                <form method="POST" enctype="multipart/form-data" class="edit-product-form">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                    <div class="form-errors">
+                        <p>Please correct the following errors:</p>
+                        <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="form-group">
+                        <label for="{{ form.product_name.id_for_label }}">{{ form.product_name.label }}</label>
+                        {{ form.product_name }}
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="{{ form.product_price.id_for_label }}">{{ form.product_price.label }}</label>
+                            {{ form.product_price }}
+                        </div>
+                        <div class="form-group half">
+                            <label for="{{ form.product_old_price.id_for_label }}">{{ form.product_old_price.label }}</label>
+                            {{ form.product_old_price }}
+                            <small class="form-help">Leave empty if there's no discount</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.product_badge.id_for_label }}">{{ form.product_badge.label }}</label>
+                        {{ form.product_badge }}
+                        <small class="form-help">E.g., "New", "Sale", "Hot", etc.</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.product_reviews.id_for_label }}">{{ form.product_reviews.label }}</label>
+                        {{ form.product_reviews }}
+                        <small class="form-help">Number of reviews</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.product_image.id_for_label }}">{{ form.product_image.label }}</label>
+                        <div class="image-upload-container">
+                            <div class="image-preview" id="imagePreview">
+                                {% if product.product_image %}
+                                <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}">
+                                {% else %}
+                                <i class="fas fa-image"></i>
+                                <p>No image selected</p>
+                                {% endif %}
+                            </div>
+                            {{ form.product_image }}
+                            <label for="{{ form.product_image.id_for_label }}" class="custom-file-upload">
+                                <i class="fas fa-upload"></i> Change Image
+                            </label>
+                            <small class="form-help">Leave empty to keep the current image</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.product_description.id_for_label }}">{{ form.product_description.label }}</label>
+                        {{ form.product_description }}
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="{% url 'seller_products' %}" class="btn btn-secondary">Cancel</a>
+                        <a href="{% url 'delete_product' product.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this product? This action cannot be undone.')">Delete Product</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navbarMenu = document.getElementById('navbarMenu');
+        
+        menuToggle.addEventListener('click', () => {
+            navbarMenu.classList.toggle('active');
+        });
+        
+        // Image preview functionality
+        const imageInput = document.getElementById('{{ form.product_image.id_for_label }}');
+        const imagePreview = document.getElementById('imagePreview');
+        
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="Product Image Preview">`;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                // If no new file is selected, show the current image if it exists
+                {% if product.product_image %}
+                imagePreview.innerHTML = `<img src="{{ product.product_image.url }}" alt="{{ product.product_name }}">`;
+                {% else %}
+                imagePreview.innerHTML = `
+                    <i class="fas fa-image"></i>
+                    <p>No image selected</p>
+                `;
+                {% endif %}
+            }
+        });
+    </script>
+</body>
+</html>

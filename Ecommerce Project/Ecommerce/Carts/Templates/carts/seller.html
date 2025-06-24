@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEasy - Seller Overview</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/seller.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-store"></i>
+            <span>Seller-Panel</span>
+        </div>
+        <div class="navbar-menu" id="navbarMenu">
+            <a href="{% url 'become_seller' %}" class="navbar-item"><i class="fa-solid fa-user-tie"></i></i> Se-Admin</a>
+            <a href="{% url 'home' %}" class="navbar-item"><i class="fas fa-home"></i> Store Home</a>
+            <a href="{% url 'seller_products' %}" class="navbar-item"><i class="fas fa-box"></i> Products</a>
+            <a href="{% url 'api' %}" class="navbar-item"><i class="fa-solid fa-server"></i> API</a>
+            <a href="{% url 'seller_dashboard' %}" class="navbar-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="{% url 'account' %}" class="navbar-item"><i class="fas fa-user"></i> Account</a>
+        </div>
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-banner">
+            <div class="welcome-content">
+                <h1>Welcome back, {{ user.username|default:"Seller" }}!</h1>
+                <p>Here's an overview of your store performance</p>
+            </div>
+            <div class="welcome-actions">
+                <a href="{% url 'add_product' %}" class="action-button"><i class="fas fa-plus"></i> Add New Product</a>
+                <a href="{% url 'become_seller' %}" class="action-button secondary"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Sales Overview</h2>
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="card-content">
+                    <p><span class="stat-number">${{ total_sales|default:"0.00" }}</span> Total Sales</p>
+                    <p><span class="stat-number">{{ orders_count|default:"0" }}</span> Orders Received</p>
+                    <p><span class="stat-number">{{ avg_order_value|default:"$0.00" }}</span> Average Order Value</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="card-link">View All Orders <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Inventory Status</h2>
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="card-content">
+                    <p><span class="stat-number">{{ total_products|default:"0" }}</span> Total Products</p>
+                    <p><span class="stat-number">{{ active_products|default:"0" }}</span> Active Products</p>
+                    <p><span class="stat-number">{{ low_stock_count|default:"0" }}</span> Low Stock Items</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'seller_products' %}" class="card-link">Manage Products <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Activity</h2>
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="card-content activity-feed">
+                    {% if recent_activities %}
+                        {% for activity in recent_activities %}
+                        <div class="activity-item">
+                            <div class="activity-icon 
+                                {% if activity.type == 'order' %}activity-order
+                                {% elif activity.type == 'product' %}activity-product
+                                {% elif activity.type == 'review' %}activity-review
+                                {% endif %}">
+                                <i class="fas 
+                                    {% if activity.type == 'order' %}fa-shopping-cart
+                                    {% elif activity.type == 'product' %}fa-box
+                                    {% elif activity.type == 'review' %}fa-star
+                                    {% endif %}"></i>
+                            </div>
+                            <div class="activity-details">
+                                <p class="activity-text">{{ activity.description }}</p>
+                                <p class="activity-time">{{ activity.timestamp }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-activity">No recent activity to display</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="card-link">View All Activity <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Performance Metrics</h2>
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="card-content">
+                    <div class="metric-item">
+                        <div class="metric-label">Conversion Rate</div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: {{ conversion_rate|default:65 }}%"></div>
+                        </div>
+                        <div class="metric-value">{{ conversion_rate|default:65 }}%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Customer Satisfaction</div>
+                        <div class="progress-bar">
+                            <div class="progress success" style="width: {{ satisfaction_rate|default:92 }}%"></div>
+                        </div>
+                        <div class="metric-value">{{ satisfaction_rate|default:92 }}%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Return Rate</div>
+                        <div class="progress-bar">
+                            <div class="progress warning" style="width: {{ return_rate|default:8 }}%"></div>
+                        </div>
+                        <div class="metric-value">{{ return_rate|default:8 }}%</div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="card-link">View Detailed Analytics <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-actions-section">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="quick-actions">
+                <a href="{% url 'add_product' %}" class="quick-action-card">
+                    <div class="action-icon"><i class="fas fa-plus"></i></div>
+                    <div class="action-title">Add Product</div>
+                </a>
+                <a href="#" class="quick-action-card">
+                    <div class="action-icon"><i class="fas fa-shipping-fast"></i></div>
+                    <div class="action-title">Process Orders</div>
+                </a>
+                <a href="#" class="quick-action-card">
+                    <div class="action-icon"><i class="fas fa-boxes"></i></div>
+                    <div class="action-title">Update Inventory</div>
+                </a>
+                <a href="#" class="quick-action-card">
+                    <div class="action-icon"><i class="fas fa-file-alt"></i></div>
+                    <div class="action-title">View Reports</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Menu toggle for mobile
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('navbarMenu').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

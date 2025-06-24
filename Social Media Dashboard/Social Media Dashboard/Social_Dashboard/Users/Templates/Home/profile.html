@@ -1,0 +1,327 @@
+{% extends 'Home/Base.html' %}
+{% load static %}
+
+{% block title %}My Profile - Social Media Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Profile Information Card -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm border-0" data-aos="fade-up">
+                <div class="card-body text-center">
+                    <div class="position-relative mb-4">
+                        <div class="profile-cover-img rounded-top"></div>
+                        <div class="profile-img-container">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile"
+                                class="profile-img">
+                            <button class="btn btn-sm btn-primary profile-img-edit" title="Change profile picture">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <h4 class="mb-1">{{ request.user.get_full_name|default:request.user.username }}</h4>
+                    <p class="text-muted mb-3">@{{ request.user.username }}</p>
+
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="px-3 text-center border-end">
+                            <h5 class="mb-0">245</h5>
+                            <small class="text-muted">Posts</small>
+                        </div>
+                        <div class="px-3 text-center border-end">
+                            <h5 class="mb-0">1.2K</h5>
+                            <small class="text-muted">Followers</small>
+                        </div>
+                        <div class="px-3 text-center">
+                            <h5 class="mb-0">530</h5>
+                            <small class="text-muted">Following</small>
+                        </div>
+                    </div>
+
+                    <p class="mb-3">Digital marketing specialist with a passion for social media analytics and content
+                        creation.</p>
+
+                    <div class="d-grid">
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-edit me-2"></i> Edit Profile
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-white p-0">
+                    <div class="list-group list-group-flush">
+                        <a href="#"
+                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-envelope text-muted me-2"></i> Email
+                            </div>
+                            <span class="text-muted">{{ request.user.email }}</span>
+                        </a>
+                        <a href="#"
+                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-calendar text-muted me-2"></i> Joined
+                            </div>
+                            <span class="text-muted">{{ request.user.date_joined|date:"M d, Y" }}</span>
+                        </a>
+                        <a href="#"
+                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-map-marker-alt text-muted me-2"></i> Location
+                            </div>
+                            <span class="text-muted">New Delhi, India</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connected Accounts Card -->
+            <div class="card shadow-sm border-0 mt-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Connected Accounts</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fab fa-facebook text-primary me-2"></i> Facebook
+                            </div>
+                            <span class="badge bg-success rounded-pill">Connected</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fab fa-twitter text-info me-2"></i> Twitter
+                            </div>
+                            <span class="badge bg-success rounded-pill">Connected</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fab fa-instagram text-danger me-2"></i> Instagram
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary">Connect</button>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fab fa-linkedin text-primary me-2"></i> LinkedIn
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary">Connect</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity and Stats -->
+        <div class="col-lg-8">
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-circle bg-primary text-white">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <h6 class="ms-3 mb-0">Profile Views</h6>
+                            </div>
+                            <h3 class="mb-0">1,248</h3>
+                            <div class="small text-success mt-2">
+                                <i class="fas fa-arrow-up"></i> 12% increase
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-circle bg-success text-white">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <h6 class="ms-3 mb-0">Engagement Rate</h6>
+                            </div>
+                            <h3 class="mb-0">4.7%</h3>
+                            <div class="small text-success mt-2">
+                                <i class="fas fa-arrow-up"></i> 3.2% increase
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-circle bg-info text-white">
+                                    <i class="fas fa-share-alt"></i>
+                                </div>
+                                <h6 class="ms-3 mb-0">Total Shares</h6>
+                            </div>
+                            <h3 class="mb-0">342</h3>
+                            <div class="small text-success mt-2">
+                                <i class="fas fa-arrow-up"></i> 8.1% increase
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card shadow-sm border-0 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Activity</h5>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#">View All</a></li>
+                            <li><a class="dropdown-item" href="#">Mark All as Read</a></li>
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-icon bg-primary">
+                                <i class="fas fa-comment text-white"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6 class="mb-1">You commented on a post</h6>
+                                <p class="mb-0 text-muted">"Great insights on social media trends for 2023!"</p>
+                                <small class="text-muted">2 hours ago</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon bg-success">
+                                <i class="fas fa-heart text-white"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6 class="mb-1">You liked a post</h6>
+                                <p class="mb-0 text-muted">"10 Ways to Increase Your Instagram Engagement"</p>
+                                <small class="text-muted">Yesterday</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon bg-info">
+                                <i class="fas fa-share text-white"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6 class="mb-1">You shared a post</h6>
+                                <p class="mb-0 text-muted">"The Ultimate Guide to TikTok Marketing"</p>
+                                <small class="text-muted">3 days ago</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon bg-warning">
+                                <i class="fas fa-user-plus text-white"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6 class="mb-1">You connected with Digital Marketing Hub</h6>
+                                <p class="mb-0 text-muted">New connection on LinkedIn</p>
+                                <small class="text-muted">1 week ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-center">
+                    <a href="#" class="text-decoration-none">View All Activity</a>
+                </div>
+            </div>
+
+            <!-- Recent Posts -->
+            <div class="card shadow-sm border-0" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Posts</h5>
+                    <a href="{% url 'create_post' %}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus me-1"></i> New Post
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item p-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <img src="https://evitamin.in/cdn/shop/articles/Evitamim_blog_creativesArtboard_1_copy_2.jpg?v=1730292344"
+                                        alt="Post thumbnail" class="rounded" height="90px" width="140px">
+                                </div>
+                                <div class="ms-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <h6 class="mb-0">How to Create Engaging Content for Multiple Platforms</h6>
+                                        <span class="badge bg-primary">Facebook</span>
+                                    </div>
+                                    <p class="text-muted small mb-2">Learn how to repurpose your content effectively
+                                        across different social media platforms.</p>
+                                    <div class="d-flex align-items-center">
+                                        <small class="text-muted me-3"><i class="far fa-calendar me-1"></i> May 15,
+                                            2023</small>
+                                        <small class="text-muted me-3"><i class="far fa-heart me-1"></i> 45
+                                            likes</small>
+                                        <small class="text-muted"><i class="far fa-comment me-1"></i> 12
+                                            comments</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item p-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <img src="https://images.ctfassets.net/dfcvkz6j859j/2K2zPTSydT4vRkOnBpVQSF/dd5548b91f93e26ac317627d2a9788a8/2025-05-content-blog-hero-top-social-media-kpis-1083x681_2x.png"
+                                        alt="Post thumbnail" class="rounded" height="90px" width="140px">
+                                </div>
+                                <div class="ms-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <h6 class="mb-0">Social Media Analytics: What Metrics Really Matter?</h6>
+                                        <span class="badge bg-info">Twitter</span>
+                                    </div>
+                                    <p class="text-muted small mb-2">Focus on these key metrics to truly understand your
+                                        social media performance.</p>
+                                    <div class="d-flex align-items-center">
+                                        <small class="text-muted me-3"><i class="far fa-calendar me-1"></i> May 10,
+                                            2023</small>
+                                        <small class="text-muted me-3"><i class="far fa-heart me-1"></i> 32
+                                            likes</small>
+                                        <small class="text-muted"><i class="far fa-comment me-1"></i> 8 comments</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item p-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <img src="https://www.wordstream.com/wp-content/uploads/2021/12/instagram-features-professional-dashboard.jpeg"
+                                        alt="Post thumbnail" class="rounded" height="90px" width="140px">
+                                </div>
+                                <div class="ms-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <h6 class="mb-0">5 Instagram Features You're Not Using (But Should Be)</h6>
+                                        <span class="badge bg-danger">Instagram</span>
+                                    </div>
+                                    <p class="text-muted small mb-2">Leverage these underutilized features to boost your
+                                        Instagram presence.</p>
+                                    <div class="d-flex align-items-center">
+                                        <small class="text-muted me-3"><i class="far fa-calendar me-1"></i> May 5,
+                                            2023</small>
+                                        <small class="text-muted me-3"><i class="far fa-heart me-1"></i> 78
+                                            likes</small>
+                                        <small class="text-muted"><i class="far fa-comment me-1"></i> 23
+                                            comments</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-center">
+                    <a href="#" class="text-decoration-none">View All Posts</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+</style>
+{% endblock %}

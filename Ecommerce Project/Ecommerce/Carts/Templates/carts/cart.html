@@ -1,0 +1,345 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - ShopEasy</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>ShopEasy</h1>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search for products...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div class="user-actions">
+                {% if user.is_authenticated %}
+                <a href="{% url 'account' %}" class="icon-link"><i class="fas fa-user"></i> Account</a>
+                <a href="#" class="icon-link"><i class="fas fa-heart"></i> Wishlist</a>
+                <a href="{% url 'cart' %}" class="icon-link cart active"><i class="fas fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
+                {% else %}
+                <a href="{% url 'login' %}" class="icon-link"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+                <a href="{% url 'signup' %}" class="icon-link"><i class="fa-solid fa-user-plus"></i> Register</a>
+                <a href="#" class="icon-link"><i class="fas fa-heart"></i> Wishlist</a>
+                <a href="{% url 'cart' %}" class="icon-link cart active"><i class="fas fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <ul class="main-nav">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li class="dropdown">
+                    <a href="#">Categories <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-content">
+                        <a href="#">Electronics</a>
+                        <a href="#">Clothing</a>
+                        <a href="#">Home & Kitchen</a>
+                        <a href="#">Books</a>
+                        <a href="#">Beauty</a>
+                    </div>
+                </li>
+                <li><a href="#">New Arrivals</a></li>
+                <li><a href="#">Best Sellers</a></li>
+                <li><a href="#">Deals</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Cart Section -->
+    <section class="cart-section">
+        <div class="container">
+            <h1 class="page-title">Shopping Cart</h1>
+            
+            {% if buy_items %}
+            <div class="cart-container">
+                <div class="cart-items">
+                    <div class="cart-header">
+                        <div class="cart-product">Product</div>
+                        <div class="cart-price">Price</div>
+                        <div class="cart-quantity">Quantity</div>
+                        <div class="cart-total">Total</div>
+                        <div class="cart-remove">Remove</div>
+                    </div>
+                    
+                    {% for item in buy_items %}
+                    <div class="cart-item">
+                        <div class="cart-product">
+                            <div class="product-image">
+                                <img src="{{ item.item_image.url }}" alt="{{ item.item_name }}">
+                            </div>
+                            <div class="product-details">
+                                <h3>{{ item.item_name }}</h3>
+                            </div>
+                        </div>
+                        <div class="cart-price">
+                            <span class="current-price">${{ item.item_price }}</span>
+                        </div>
+                        <div class="cart-quantity">
+                            <div class="quantity-control">
+                                <form method="post" action="{% url 'update_cart_item' %}" class="quantity-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                                    <button type="button" class="quantity-btn decrease" data-item-id="{{ item.id }}">-</button>
+                                    <input type="number" name="quantity" value="{{ item.item_quantity|default:'1' }}" min="1" class="quantity-input" data-item-id="{{ item.id }}">
+                                    <button type="button" class="quantity-btn increase" data-item-id="{{ item.id }}">+</button>
+                                </form>
+                            </div>
+                        </div>
+                        <form method="post" action="{% url 'update_cart_item' %}" class="quantity-form">
+                        <div class="cart-total">
+                            ${{ item.total_price|default:item.item_price }}
+                        </div>
+                        </form>
+                        <div class="cart-remove">
+                            <form method="post" action="{% url 'remove_cart_item' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="item_id" value="{{ item.id }}">
+                                <button type="submit" class="remove-btn"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="cart-summary">
+                    <h2>Order Summary</h2>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>${{ total_price }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>{% if total_price > 50 %}Free{% else %}${{ shipping_cost }}{% endif %}</span>
+                    </div>
+                    {% if discount %}
+                    <div class="summary-row discount">
+                        <span>Discount</span>
+                        <span>-${{ discount_amount }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span>${{ total_after_discount }}</span>
+                    </div>
+                    
+                    <div class="promo-code">
+                        <h3>Promo Code</h3>
+                        <form method="post" action="{% url 'apply_promocode' %}">
+                            {% csrf_token %}
+                            <div class="promo-input">
+                                <input type="text" name="promo_code" placeholder="Enter promo code">
+                                <button type="submit" class="apply-btn">Apply</button>
+                            </div>
+                        </form>
+                        {% if promo_error %}
+                        <p class="promo-error">{{ promo_error }}</p>
+                        {% endif %}
+                            {% if active_promo %}
+                                        <div class="active-promo">
+                                            <p>{{ active_promo.code }} applied: {{ active_promo.description }}</p>
+                                            <a href="{% url 'remove_promo' %}" class="remove-promo">Remove</a>
+                                        </div>
+                                        {% endif %}
+                    </div>
+                    
+                    <div class="checkout-buttons">
+                        <a href="{% url 'account' %}" class="checkout-btn">Proceed to Checkout</a>
+                        <a href="{% url 'products' %}" class="continue-shopping">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+            {% elif buy_item %}
+            <!-- Single item display (for backward compatibility) -->
+            <div class="cart-container">
+                <div class="cart-items">
+                    <div class="cart-header">
+                        <div class="cart-product">Product</div>
+                        <div class="cart-price">Price</div>
+                        <div class="cart-quantity">Quantity</div>
+                        <div class="cart-total">Total</div>
+                        <div class="cart-remove">Remove</div>
+                    </div>
+                    
+                    <div class="cart-item">
+                        <div class="cart-product">
+                            <div class="product-image">
+                                <img src="{{ buy_item.item_image.url }}" alt="{{ buy_item.item_name }}">
+                            </div>
+                            <div class="product-details">
+                                <h3>{{ buy_item.item_name }}</h3>
+                            </div>
+                        </div>
+                        <div class="cart-price">
+                            <span class="current-price">${{ buy_item.item_price }}</span>
+                        </div>
+                        <div class="cart-quantity">
+                            <div class="quantity-control">
+                                <form method="post" action="{% url 'update_cart_item' %}" class="quantity-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="item_id" value="{{ buy_item.id }}">
+                                    <button type="button" class="quantity-btn decrease" data-item-id="{{ buy_item.id }}">-</button>
+                                    <input type="number" name="quantity" value="{{ buy_item.item_quantity|default:'1' }}" min="1" class="quantity-input" data-item-id="{{ buy_item.id }}">
+                                    <button type="button" class="quantity-btn increase" data-item-id="{{ buy_item.id }}">+</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="cart-total">
+                            ${{ buy_item.total_price|default:buy_item.item_price }}
+                        </div>
+                        <div class="cart-remove">
+                            <form method="post" action="{% url 'remove_cart_item' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="item_id" value="{{ buy_item.id }}">
+                                <button type="submit" class="remove-btn"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cart-summary">
+                    <h2>Order Summary</h2>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>${{ buy_item.total_price|default:buy_item.item_price }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>{% if buy_item.item_price > 50 %}Free{% else %}$5.99{% endif %}</span>
+                    </div>
+                    {% if discount %}
+                    <div class="summary-row discount">
+                        <span>Discount</span>
+                        <span>-${{ discount_amount }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span>
+                            {% if buy_item.item_price > 50 %}
+                                ${{ buy_item.total_price|default:buy_item.item_price }}
+                            {% else %}
+                                ${{ buy_item.total_price|default:buy_item.item_price|add:"5.99" }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="promo-code">
+                        <h3>Promo Code</h3>
+                        <form method="post" action="#">
+                            {% csrf_token %}
+                            <div class="promo-input">
+                                <input type="text" name="promo_code" placeholder="Enter promo code">
+                                <button type="submit" class="apply-btn">Apply</button>
+                            </div>
+                        </form>
+                        {% if promo_error %}
+                        <p class="promo-error">{{ promo_error }}</p>
+                        {% endif %}
+                        {% if active_promo %}
+                        <div class="active-promo">
+                            <p>{{ active_promo.code }} applied: {{ active_promo.description }}</p>
+                            <a href="{% url 'remove_promo' %}" class="remove-promo">Remove</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="checkout-buttons">
+                        <a href="#" class="checkout-btn">Proceed to Checkout</a>
+                        <a href="{% url 'products' %}" class="continue-shopping">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-cart">
+                <div class="empty-cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h2>Your cart is empty</h2>
+                <p>Looks like you haven't added anything to your cart yet.</p>
+                <a href="{% url 'products' %}" class="btn">Start Shopping</a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3>ShopEasy</h3>
+                    <p>Your one-stop destination for all your shopping needs. Quality products, great prices, and excellent customer service.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                <div class="checkout-buttons">
+                        <a href="#" class="checkout-btn">Proceed to Checkout</a>
+                        <a href="{% url 'products' %}" class="continue-shopping">Continue Shopping</a>
+                    </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 ShopEasy. All Rights Reserved.</p>
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-cc-paypal"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/cart.js' %}"></script>
+    <script>
+        // JavaScript to handle quantity buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Decrease quantity
+            document.querySelectorAll('.quantity-btn.decrease').forEach(button => {
+                button.addEventListener('click', function() {
+                    const itemId = this.getAttribute('data-item-id');
+                    const inputField = document.querySelector(`.quantity-input[data-item-id="${itemId}"]`);
+                    let value = parseInt(inputField.value);
+                    if (value > 1) {
+                        inputField.value = value - 1;
+                        submitForm(this);
+                    }
+                });
+            });
+
+            // Increase quantity
+            document.querySelectorAll('.quantity-btn.increase').forEach(button => {
+                button.addEventListener('click', function() {
+                    const itemId = this.getAttribute('data-item-id');
+                    const inputField = document.querySelector(`.quantity-input[data-item-id="${itemId}"]`);
+                    let value = parseInt(inputField.value);
+                    inputField.value = value + 1;
+                    submitForm(this);
+                });
+            });
+
+            // Submit the form when quantity changes
+            function submitForm(button) {
+                const form = button.closest('.quantity-form');
+                form.submit();
+            }
+        });
+    </script>
+</body>
+</html>

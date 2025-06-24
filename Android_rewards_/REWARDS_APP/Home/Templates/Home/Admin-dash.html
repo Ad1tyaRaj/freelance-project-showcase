@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'Admin-dash.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-tachometer-alt"></i> Neon Rewards
+            </div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="#" class="sidebar-link"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li class="sidebar-item"><a href="{% url 'home' %}" class="sidebar-link"><i class="fa-solid fa-house-laptop"></i> Home</a></li>
+                {% if user.is_superuser %}
+                <li class="sidebar-item"><a href="{% url 'add_task' %}" class="sidebar-link"><i class="fas fa-users"></i> Tasks</a></li>
+                {% else %}
+                <li class="sidebar-item"><a href="{% url 'task' %}" class="sidebar-link"><i class="fas fa-users"></i> Tasks</a></li>
+                {% endif %}
+                <li class="sidebar-item"><a href="{% url 'profile' %}" class="sidebar-link"><i class="fas fa-boxes"></i> Profile</a></li>
+                <li class="sidebar-item"><a href="#" class="sidebar-link"><i class="fas fa-chart-line"></i> Analytics</a></li>
+                <li class="sidebar-item"><a href="{% url 'admin_settings' %}" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a></li>
+                <li class="sidebar-item"><a href="{% url 'add_task' %}" class="sidebar-link"><i class="fas fa-plus"></i> Add Task</a></li>  
+            </ul>
+        </aside>
+        <header class="header">
+            <button class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="header-title">Dashboard</h1>
+            <div class="user-profile">
+                <img src="https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg" alt="User Profile">
+                <span>{{ user.username }}</span>
+            </div>
+        </header>
+        <main class="main">
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h2 class="card-title">Total Users</h2>
+                    <p class="card-value">1,234</p>
+                </div>
+                <div class="dashboard-card">
+                    <h2 class="card-title">Total Apps Downloaded</h2>
+                    <p class="card-value">567</p>
+                </div>
+                <div class="dashboard-card">
+                    <h2 class="card-title">Total Points Distributed</h2>
+                    <p class="card-value">8,901</p>
+                </div>
+                <div class="dashboard-card">
+                    <h2 class="card-title">New Users</h2>
+                    <p class="card-value">42</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sidebar toggle for mobile
+        document.querySelector('.sidebar-toggle').addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

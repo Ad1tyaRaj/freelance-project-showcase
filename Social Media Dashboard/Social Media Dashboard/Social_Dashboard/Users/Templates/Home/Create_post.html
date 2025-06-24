@@ -1,0 +1,537 @@
+{% extends 'Home/Base.html' %}
+{% load static %}
+
+{% block title %}Create Post - Social Media Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" data-aos="fade-up">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="social-icon-bg me-4" id="platform-icon-container">
+                            <i class="fab fa-facebook-f fa-2x text-white" id="platform-icon"></i>
+                        </div>
+                        <div>
+                            <h2 class="mb-1" id="platform-title">Create Post</h2>
+                            <p class="text-muted mb-0" id="platform-subtitle">Compose and schedule your social media content</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Platform Selection -->
+        <div class="col-12 mb-4" data-aos="fade-up">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3">Select Platform</h5>
+                    <div class="d-flex flex-wrap">
+                        <div class="form-check form-check-inline me-4">
+                            <input class="form-check-input" type="radio" name="platform" id="platform_facebook" value="facebook" checked>
+                            <label class="form-check-label" for="platform_facebook">
+                                <i class="fab fa-facebook text-primary me-1"></i> Facebook
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline me-4">
+                            <input class="form-check-input" type="radio" name="platform" id="platform_twitter" value="twitter">
+                            <label class="form-check-label" for="platform_twitter">
+                                <a href="{% url 'create_twitter_post' %}" class="text-decoration-none">
+                                    <i class="fab fa-twitter text-info me-1"></i> Twitter
+                                </a>
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline me-4">
+                            <input class="form-check-input" type="radio" name="platform" id="platform_instagram" value="instagram">
+                            <label class="form-check-label" for="platform_instagram">
+                                <i class="fab fa-instagram text-danger me-1"></i> Instagram
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="platform" id="platform_linkedin" value="linkedin">
+                            <label class="form-check-label" for="platform_linkedin">
+                                <i class="fab fa-linkedin text-primary me-1"></i> LinkedIn
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Post Creation Form -->
+        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Compose Post</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        {% if messages %}
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+                        
+                        <input type="hidden" name="platform" id="selected_platform" value="facebook">
+                        
+                        <div class="mb-4">
+                            <label for="post_text" class="form-label">Post Content</label>
+                            <textarea class="form-control" id="post_text" name="post_text" rows="5" placeholder="What's on your mind?"></textarea>
+                            <small id="char-count" class="text-muted mt-1">0/280 characters</small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Media</label>
+                            <div class="dropzone-container border rounded p-3 text-center position-relative">
+                                <input type="file" name="post_media" id="post_media" class="file-input" accept="image/*,video/*" multiple>
+                                <div class="dropzone-placeholder">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-2"></i>
+                                    <h6>Drag and drop files here</h6>
+                                    <p class="text-muted small mb-2">or</p>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('post_media').click()">
+                                        Browse Files
+                                    </button>
+                                    <p class="text-muted small mt-2">Supports: JPG, PNG, GIF, MP4</p>
+                                </div>
+                                <div id="preview-container" class="d-flex flex-wrap mt-3" style="display: none !important;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="post_link" class="form-label">Link (Optional)</label>
+                                <input type="url" class="form-control" id="post_link" name="post_link" placeholder="https://example.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="post_feeling" class="form-label">Feeling/Activity (Optional)</label>
+                                <select class="form-select" id="post_feeling" name="post_feeling">
+                                    <option value="">Select feeling or activity</option>
+                                    <option value="happy">😊 Happy</option>
+                                    <option value="sad">😢 Sad</option>
+                                    <option value="excited">🤩 Excited</option>
+                                    <option value="celebrating">🎉 Celebrating</option>
+                                    <option value="traveling">✈️ Traveling to</option>
+                                    <option value="watching">📺 Watching</option>
+                                    <option value="listening">🎵 Listening to</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4" id="location-container">
+                            <label for="post_location" class="form-label">Location (Optional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                <input type="text" class="form-control" id="post_location" name="post_location" placeholder="Add a location">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4" id="privacy-container">
+                            <label class="form-label">Privacy</label>
+                            <div class="d-flex">
+                                <div class="form-check me-4">
+                                    <input class="form-check-input" type="radio" name="post_privacy" id="privacy_public" value="public" checked>
+                                    <label class="form-check-label" for="privacy_public">
+                                        <i class="fas fa-globe-americas me-1"></i> Public
+                                    </label>
+                                </div>
+                                <div class="form-check me-4">
+                                    <input class="form-check-input" type="radio" name="post_privacy" id="privacy_friends" value="friends">
+                                    <label class="form-check-label" for="privacy_friends">
+                                        <i class="fas fa-user-friends me-1"></i> Friends
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="post_privacy" id="privacy_only_me" value="only_me">
+                                    <label class="form-check-label" for="privacy_only_me">
+                                        <i class="fas fa-lock me-1"></i> Only me
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-check form-switch mb-4">
+                            <input class="form-check-input" type="checkbox" id="schedule_post" name="schedule_post">
+                            <label class="form-check-label" for="schedule_post">Schedule for later</label>
+                        </div>
+                        
+                        <div id="schedule_options" class="mb-4" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="schedule_date" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="schedule_date" name="schedule_date">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="schedule_time" class="form-label">Time</label>
+                                    <input type="time" class="form-control" id="schedule_time" name="schedule_time">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary" onclick="window.history.back();">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </button>
+                            <div>
+                                <button type="submit" name="action" value="draft" class="btn btn-light me-2">
+                                    <i class="fas fa-save me-2"></i> Save as Draft
+                                </button>
+                                <button type="submit" name="action" value="publish" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i> Publish Now
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+            <!-- Post Preview -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Post Preview</h5>
+                </div>
+                <div class="card-body">
+                    <div class="post-preview">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{% if profile.picture %}{{ profile.picture.data.url }}{% else %}https://graph.facebook.com/{{ profile.id }}/picture?type=large{% endif %}" alt="Profile" class="rounded-circle me-2" width="40" height="40">
+                            <div>
+                                <h6 class="mb-0">{{ profile.name|default:'Your Profile' }}</h6>
+                                <small class="text-muted">Just now · <i class="fas fa-globe-americas"></i></small>
+                            </div>
+                        </div>
+                        <div class="post-content mb-3">
+                            <p id="preview-text" class="mb-2">Your post content will appear here...</p>
+                            <div id="preview-media" class="rounded mb-2 d-none"></div>
+                            <div id="preview-link" class="border rounded p-2 d-none">
+                                <div class="d-flex">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1" id="preview-link-title">Link Title</h6>
+                                        <p class="small text-muted mb-0" id="preview-link-url">https://example.com</p>
+                                    </div>
+                                    <div class="preview-link-image bg-light rounded" style="width: 60px; height: 60px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-actions d-flex border-top pt-2">
+                            <button class="btn btn-sm btn-light flex-grow-1 me-1">
+                                <i class="far fa-thumbs-up me-1"></i> Like
+                            </button>
+                            <button class="btn btn-sm btn-light flex-grow-1 me-1">
+                                <i class="far fa-comment me-1"></i> Comment
+                            </button>
+                            <button class="btn btn-sm btn-light flex-grow-1">
+                                <i class="far fa-share-square me-1"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tips Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Posting Tips</h5>
+                </div>
+                <div class="card-body">
+                    <div class="tip-item d-flex align-items-start mb-3">
+                        <div class="tip-icon bg-primary-light rounded-circle p-2 me-3">
+                            <i class="fas fa-clock text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Best Time to Post</h6>
+                            <p class="text-muted small mb-0">Weekdays between 1pm-3pm typically get the highest engagement.</p>
+                        </div>
+                    </div>
+                    <div class="tip-item d-flex align-items-start mb-3">
+                        <div class="tip-icon bg-success-light rounded-circle p-2 me-3">
+                            <i class="fas fa-image text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Include Visual Content</h6>
+                            <p class="text-muted small mb-0">Posts with images get 2.3x more engagement than those without.</p>
+                        </div>
+                    </div>
+                    <div class="tip-item d-flex align-items-start mb-3">
+                        <div class="tip-icon bg-info-light rounded-circle p-2 me-3">
+                            <i class="fas fa-hashtag text-info"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Use Relevant Hashtags</h6>
+                            <p class="text-muted small mb-0" id="hashtag-tip">1-2 targeted hashtags can increase your post's reach.</p>
+                        </div>
+                    </div>
+                    <div class="tip-item d-flex align-items-start">
+                        <div class="tip-icon bg-warning-light rounded-circle p-2 me-3">
+                            <i class="fas fa-question text-warning"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Ask Questions</h6>
+                            <p class="text-muted small mb-0">Ending your post with a question increases comment rates by 15%.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Platform selection
+        const platformRadios = document.querySelectorAll('input[name="platform"]');
+        const selectedPlatform = document.getElementById('selected_platform');
+        const platformIcon = document.getElementById('platform-icon');
+        const platformIconContainer = document.getElementById('platform-icon-container');
+        const platformTitle = document.getElementById('platform-title');
+        const platformSubtitle = document.getElementById('platform-subtitle');
+        const privacyContainer = document.getElementById('privacy-container');
+        const locationContainer = document.getElementById('location-container');
+        const charCount = document.getElementById('char-count');
+        const postText = document.getElementById('post_text');
+        const hashtagTip = document.getElementById('hashtag-tip');
+        
+        // Update UI based on selected platform
+        function updatePlatformUI(platform) {
+            selectedPlatform.value = platform;
+            
+            // Reset classes
+            platformIconContainer.className = 'social-icon-bg me-4';
+            
+            // Update UI based on platform
+            switch(platform) {
+                case 'facebook':
+                    platformIconContainer.classList.add('facebook-bg');
+                    platformIcon.className = 'fab fa-facebook-f fa-2x text-white';
+                    platformTitle.textContent = 'Create Facebook Post';
+                    platformSubtitle.textContent = 'Compose and schedule your Facebook content';
+                    privacyContainer.style.display = 'block';
+                    locationContainer.style.display = 'block';
+                    charCount.textContent = `${postText.value.length}/5000 characters`;
+                    hashtagTip.textContent = '1-2 targeted hashtags can increase your post\'s reach.';
+                    break;
+                case 'twitter':
+                    platformIconContainer.classList.add('twitter-bg');
+                    platformIcon.className = 'fab fa-twitter fa-2x text-white';
+                    platformTitle.textContent = 'Create Tweet';
+                    platformSubtitle.textContent = 'Compose and schedule your Twitter content';
+                    privacyContainer.style.display = 'none';
+                    locationContainer.style.display = 'block';
+                    charCount.textContent = `${postText.value.length}/280 characters`;
+                    hashtagTip.textContent = '1-2 relevant hashtags can significantly boost your tweet visibility.';
+                    break;
+                case 'instagram':
+                    platformIconContainer.classList.add('instagram-bg');
+                    platformIcon.className = 'fab fa-instagram fa-2x text-white';
+                    platformTitle.textContent = 'Create Instagram Post';
+                    platformSubtitle.textContent = 'Compose and schedule your Instagram content';
+                    privacyContainer.style.display = 'none';
+                    locationContainer.style.display = 'block';
+                    charCount.textContent = `${postText.value.length}/2200 characters`;
+                    hashtagTip.textContent = 'Up to 30 relevant hashtags can maximize your post\'s reach.';
+                    break;
+                case 'linkedin':
+                    platformIconContainer.classList.add('linkedin-bg');
+                    platformIcon.className = 'fab fa-linkedin-in fa-2x text-white';
+                    platformTitle.textContent = 'Create LinkedIn Post';
+                    platformSubtitle.textContent = 'Compose and schedule your LinkedIn content';
+                    privacyContainer.style.display = 'none';
+                    locationContainer.style.display = 'none';
+                    charCount.textContent = `${postText.value.length}/3000 characters`;
+                    hashtagTip.textContent = '3-5 industry-specific hashtags work best on LinkedIn.';
+                    break;
+            }
+        }
+        
+        // Initialize with Facebook
+        updatePlatformUI('facebook');
+        
+        // Listen for platform changes
+        platformRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                updatePlatformUI(this.value);
+            });
+        });
+        
+        // Character count
+        postText.addEventListener('input', function() {
+            const platform = selectedPlatform.value;
+            let maxChars = 5000; // Default for Facebook
+            
+            switch(platform) {
+                case 'twitter':
+                    maxChars = 280;
+                    break;
+                case 'instagram':
+                    maxChars = 2200;
+                    break;
+                case 'linkedin':
+                    maxChars = 3000;
+                    break;
+            }
+            
+            charCount.textContent = `${this.value.length}/${maxChars} characters`;
+            
+            // Warn if over limit
+            if (this.value.length > maxChars) {
+                charCount.classList.add('text-danger');
+            } else {
+                charCount.classList.remove('text-danger');
+            }
+        });
+        
+        // Schedule post toggle
+        const scheduleCheckbox = document.getElementById('schedule_post');
+        const scheduleOptions = document.getElementById('schedule_options');
+        
+        scheduleCheckbox.addEventListener('change', function() {
+            scheduleOptions.style.display = this.checked ? 'block' : 'none';
+        });
+        
+        // File upload preview
+        const fileInput = document.getElementById('post_media');
+        const previewContainer = document.getElementById('preview-container');
+        const dropzoneContainer = document.querySelector('.dropzone-container');
+        const dropzonePlaceholder = document.querySelector('.dropzone-placeholder');
+        
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            if (!files.length) return;
+            
+            previewContainer.innerHTML = '';
+            previewContainer.style.display = 'flex';
+            dropzonePlaceholder.style.display = 'none';
+            
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                
+                reader.onload = function(e) {
+                    if (file.type.startsWith('image/')) {
+                        previewItem.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+                            <div class="preview-remove"><i class="fas fa-times"></i></div>
+                        `;
+                    } else if (file.type.startsWith('video/')) {
+                        previewItem.innerHTML = `
+                            <video width="100" height="100" style="object-fit: cover; border-radius: 4px;">
+                                <source src="${e.target.result}" type="${file.type}">
+                            </video>
+                            <div class="preview-remove"><i class="fas fa-times"></i></div>
+                        `;
+                    }
+                    
+                    previewContainer.appendChild(previewItem);
+                    
+                    // Add event listener to remove button
+                    const removeBtn = previewItem.querySelector('.preview-remove');
+                    if (removeBtn) {
+                        removeBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            previewItem.remove();
+                            
+                            // Show placeholder if no more previews
+                            if (previewContainer.children.length === 0) {
+                                previewContainer.style.display = 'none';
+                                dropzonePlaceholder.style.display = 'block';
+                            }
+                        });
+                    }
+                    
+                    // Update preview in the post preview card
+                    updateMediaPreview(e.target.result, file.type);
+                };
+                
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropzoneContainer.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzoneContainer.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzoneContainer.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropzoneContainer.classList.add('border-primary');
+        }
+        
+        function unhighlight() {
+            dropzoneContainer.classList.remove('border-primary');
+        }
+        
+        dropzoneContainer.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            fileInput.files = files;
+            handleFileSelect({target: {files: files}});
+        }
+        
+        // Live preview updates
+        const previewText = document.getElementById('preview-text');
+        const postLink = document.getElementById('post_link');
+        const previewLink = document.getElementById('preview-link');
+        const previewLinkUrl = document.getElementById('preview-link-url');
+        
+        postText.addEventListener('input', function() {
+            previewText.textContent = this.value || 'Your post content will appear here...';
+        });
+        
+        postLink.addEventListener('input', function() {
+            if (this.value) {
+                previewLink.classList.remove('d-none');
+                previewLinkUrl.textContent = this.value;
+            } else {
+                previewLink.classList.add('d-none');
+            }
+        });
+        
+        function updateMediaPreview(src, type) {
+            const previewMedia = document.getElementById('preview-media');
+            previewMedia.classList.remove('d-none');
+            
+            if (type.startsWith('image/')) {
+                previewMedia.innerHTML = `<img src="${src}" alt="Preview" class="img-fluid rounded">`;
+            } else if (type.startsWith('video/')) {
+                previewMedia.innerHTML = `
+                    <video controls class="img-fluid rounded">
+                        <source src="${src}" type="${type}">
+                        Your browser does not support the video tag.
+                    </video>
+                `;
+            }
+        }
+    });
+</script>
+{% endblock %}
