@@ -19,7 +19,7 @@ This repository presents a collection of **freelance-style demo web applications
 |--------|-------------|------------|----------|
 | [Android Rewards App](./Android_rewards_) | Digital reward system with QR scanning and reward redemption | Django, DRF | ✅ |
 | [Ecommerce Web App](./Ecommerce%20Project) | Product catalog, cart, and order simulation | Django, DRF, JS | ✅ |
-| [Notes App](./Notes-app) | Lightweight note manager with CRUD functionality | Flask, Flask-RESTful | ✅ |
+| [Notes App](./Notes-app) | Lightweight note manager with CRUD functionality | django, django-RESTful | ✅ |
 | [Social Media Dashboard](./Social%20Media%20Dashboard) | Admin dashboard with API data charts | Django, DRF, Chart.js | ✅ |
 
 ---
@@ -93,12 +93,61 @@ An admin-style dashboard that fetches real-time data through REST APIs and displ
 
 ## 🧪 Running the Projects
 
-Each folder contains a `README.md` with:
-- Setup instructions
-- Dependencies
-- How to run the API server
-- Example API endpoints
+Sure, Adi! Here's a **professional and reusable `Setup Instructions` section** you can add to each individual project’s `README.md` — especially since all your projects are **web apps with REST APIs** using Django or Flask.
 
+You can tweak it slightly per project based on its framework. I’ll give you two templates: one for **Django + DRF**, and one for **Flask + Flask-RESTful**.
+
+---
+
+## ✅ Setup Instructions (for Django + Django REST Framework)
+
+
+## ⚙️ Setup Instructions
+
+Follow the steps below to set up and run the project locally.
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Ad1tyaRaj/freelance-project-showcase.git
+cd freelance-project-showcase/<project-folder-name>
+````
+
+### 2. Create and Activate Virtual Environment
+
+```bash
+# For Windows
+python -m venv venv
+venv\Scripts\activate
+
+# For macOS/Linux
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Apply Migrations
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 5. Run the Development Server
+
+```bash
+python manage.py runserver
+```
+
+### 6. API Endpoints
+
+Visit `http://127.0.0.1:8000/api/` in your browser or use Postman to test endpoints.
+
+````
 ---
 
 ## 📄 License
@@ -111,7 +160,7 @@ This repository is licensed under the [MIT License](LICENSE).
 
 If you'd like to discuss freelance opportunities, collaborations, or backend/frontend work:
 
-- 📧 Email: `your.email@example.com` *(replace this with your email)*
+- 📧 Email: `code.adityaraj@gmail.com`
 - 💻 GitHub: [@Ad1tyaRaj](https://github.com/Ad1tyaRaj)
 - 🌐 Portfolio: [ad1tyaraj.github.io/Portfolio](https://ad1tyaraj.github.io/Portfolio)
 
