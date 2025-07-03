@@ -93,9 +93,9 @@ An admin-style dashboard that fetches real-time data through REST APIs and displ
 
 ## 🧪 Running the Projects
 
-Sure, Adi! Here's a **professional and reusable `Setup Instructions` section** you can add to each individual project’s `README.md` — especially since all your projects are **web apps with REST APIs** using Django or Flask.
+**professional and reusable `Setup Instructions` section** you can add to each individual project’s `README.md` — especially since all your projects are **web apps with REST APIs** using Django or Flask.
 
-You can tweak it slightly per project based on its framework. I’ll give you two templates: one for **Django + DRF**, and one for **Flask + Flask-RESTful**.
+You can tweak it slightly per project based on its framework. I’ll give you two templates: one for **Django + DRF**.
 
 ---
 
